@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — MusicOnline</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ══════════ Sidebar ══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="home.html" class="sidebar-logo">
+      <div class="sidebar-logo-disc"></div>
+      <span class="sidebar-logo-text">Music<span>Online</span></span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item active" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a class="nav-item" href="search.html"><i class="fas fa-search"></i> Browse Vinyl</a>
+      <div class="nav-section">My Account</div>
+      <a class="nav-item" href="my-vinyls.html"><i class="fas fa-compact-disc"></i> My Listings</a>
+      <a class="nav-item" href="add-vinyl.html"><i class="fas fa-plus-circle"></i> Add Vinyl</a>
+      <a class="nav-item" href="my-orders.html"><i class="fas fa-shopping-bag"></i> My Orders</a>
+      <a class="nav-item" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+      <div id="admin-nav-section" style="display:none">
+        <div class="nav-section">Admin</div>
+        <a class="nav-item" href="admin.html"><i class="fas fa-shield-alt"></i> Admin Panel</a>
+      </div>
+    </nav>
+    <div class="sidebar-user" onclick="moLogout && moLogout()">
+      <div class="sidebar-avatar"><i class="fas fa-user"></i></div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-username" id="sidebar-username">User</div>
+        <div class="sidebar-role" id="sidebar-role">user</div>
+      </div>
+      <i class="fas fa-sign-out-alt" style="color:rgba(255,255,255,.3);font-size:var(--fs-sm)"></i>
+    </div>
+  </aside>
+
+  <!-- ══════════ Main content ══════════ -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title"><i class="fas fa-tachometer-alt" style="color:var(--brand-400)"></i> Dashboard</div>
+      <div class="topbar-actions">
+        <a href="search.html" class="btn btn-ghost btn-sm"><i class="fas fa-search"></i> Browse</a>
+        <a href="add-vinyl.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Vinyl</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- Welcome banner -->
+      <div style="background:linear-gradient(135deg,var(--neutral-900),var(--brand-900));border-radius:var(--r-xl);padding:var(--sp-6) var(--sp-8);margin-bottom:var(--sp-6);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-4)">
+        <div>
+          <div style="font-size:var(--fs-xs);color:var(--gold-400);font-weight:var(--fw-semi);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--sp-2)">Welcome back</div>
+          <h2 style="font-size:var(--fs-2xl);font-weight:var(--fw-black);color:#fff;margin-bottom:var(--sp-1)" id="welcome-name">—</h2>
+          <p style="color:rgba(255,255,255,.45);font-size:var(--fs-sm)" id="welcome-role-text"></p>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--sp-4)">
+          <div style="width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--neutral-500) 0 18%,var(--brand-700) 18% 100%);opacity:.6;position:relative">
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--neutral-900);box-shadow:0 0 0 2px var(--gold-500)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row" style="margin-bottom:var(--sp-8)">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--brand-50);color:var(--brand-600)"><i class="fas fa-compact-disc"></i></div>
+          <div><div class="stat-val" id="stat-my">—</div><div class="stat-lbl">My Listings</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fff8e1;color:var(--gold-700)"><i class="fas fa-record-vinyl"></i></div>
+          <div><div class="stat-val" id="stat-total">—</div><div class="stat-lbl">Total Listings</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8f5e9;color:#2d7a3a"><i class="fas fa-check-circle"></i></div>
+          <div><div class="stat-val" id="stat-available">—</div><div class="stat-lbl">Available</div></div>
+        </div>
+      </div>
+
+      <!-- My recent listings -->
+      <div style="margin-bottom:var(--sp-8)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4)">
+          <h3 style="font-size:var(--fs-lg);font-weight:var(--fw-bold)">
+            <i class="fas fa-compact-disc" style="color:var(--brand-500);margin-right:var(--sp-2)"></i>My Recent Listings
+          </h3>
+          <a href="my-vinyls.html" class="btn btn-ghost btn-sm">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="vinyl-grid" id="my-vinyls-preview">
+          <div style="grid-column:1/-1;text-align:center;padding:var(--sp-8)">
+            <div class="spinner" style="margin:0 auto"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recently on marketplace -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4)">
+          <h3 style="font-size:var(--fs-lg);font-weight:var(--fw-bold)">
+            <i class="fas fa-store" style="color:var(--gold-600);margin-right:var(--sp-2)"></i>Recently Added to Marketplace
+          </h3>
+          <a href="search.html" class="btn btn-ghost btn-sm">Browse All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="vinyl-grid" id="recent-grid">
+          <div style="grid-column:1/-1;text-align:center;padding:var(--sp-8)">
+            <div class="spinner" style="margin:0 auto"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+<div id="toast-container"></div>
+
+<script src="../js/api-base.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  /* ── Session check (Task 3: session management) ── */
+  var user = requireLogin();
+  if (!user) {
+    /* requireLogin() redirects to login.html if not authenticated */
+  } else {
+    /* Render sidebar */
+    var unEl = document.getElementById('sidebar-username');
+    var rlEl = document.getElementById('sidebar-role');
+    if (unEl) unEl.textContent = user.username || user.email;
+    if (rlEl) rlEl.textContent = user.role;
+
+    /* Welcome banner */
+    document.getElementById('welcome-name').textContent     = 'Hello, ' + (user.username || user.email) + '!';
+    document.getElementById('welcome-role-text').textContent = user.role === 'ADMIN' ? 'Administrator account' : user.role === 'RETAILER' ? 'Retailer account' : 'Buyer / Collector account';
+
+    /* Show admin nav item */
+    if (user.role === 'ADMIN') {
+      document.getElementById('admin-nav-section').style.display = 'block';
+    }
+
+    /* Load my listings */
+    moApiFetch('/api/vinyls/mine')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var items = Array.isArray(data) ? data : [];
+        document.getElementById('stat-my').textContent = items.length;
+        var available = items.filter(function (v) { return v.available !== false; }).length;
+        document.getElementById('stat-available').textContent = available;
+
+        var grid = document.getElementById('my-vinyls-preview');
+        var recent = items.slice(0, 4);
+        if (!recent.length) {
+          grid.innerHTML =
+            '<div class="empty-state" style="grid-column:1/-1">' +
+            '<div class="icon"><i class="fas fa-compact-disc"></i></div>' +
+            '<h3>No listings yet</h3>' +
+            '<p><a href="add-vinyl.html" style="color:var(--brand-600);font-weight:600">Add your first vinyl listing</a></p>' +
+            '</div>';
+          return;
+        }
+        grid.innerHTML = '';
+        recent.forEach(function (v) {
+          var card = buildVinylCard(v, function (vinyl) {
+            window.location.href = 'vinyl-detail.html?id=' + vinyl.id;
+          });
+          grid.appendChild(card);
+        });
+      })
+      .catch(function () {
+        document.getElementById('my-vinyls-preview').innerHTML =
+          '<p style="grid-column:1/-1;color:var(--clr-error)"><i class="fas fa-exclamation-circle"></i> Could not load your listings.</p>';
+      });
+
+    /* Load marketplace (public) */
+    fetch(moApiBaseUrl() + '/api/public/vinyls?page=0&size=8')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        document.getElementById('stat-total').textContent = data.totalElements || 0;
+        var grid  = document.getElementById('recent-grid');
+        var items = data.content || [];
+        if (!items.length) {
+          grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon"><i class="fas fa-record-vinyl"></i></div><h3>Marketplace is empty</h3></div>';
+          return;
+        }
+        grid.innerHTML = '';
+        items.forEach(function (v) {
+          var card = buildVinylCard(v, function (vinyl) {
+            window.location.href = 'vinyl-detail.html?id=' + vinyl.id;
+          });
+          grid.appendChild(card);
+        });
+      })
+      .catch(function () {
+        document.getElementById('recent-grid').innerHTML =
+          '<p style="grid-column:1/-1;color:var(--clr-error)">Could not load marketplace listings.</p>';
+      });
+  }
+</script>
+</body>
+</html>

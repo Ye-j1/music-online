@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════════════════
+   MusicOnline — Design Tokens
+   Vinyl Record Store theme: warm cream, deep brown, gold
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand palette ── */
+  --brand-900: #1a0a00;
+  --brand-800: #2d1200;
+  --brand-700: #4a1e00;
+  --brand-600: #6b2d00;
+  --brand-500: #8b3a00;
+  --brand-400: #b85a00;
+  --brand-300: #e07820;
+  --brand-200: #f0a050;
+  --brand-100: #f8d4a0;
+  --brand-50:  #fef5e8;
+
+  /* ── Gold accent ── */
+  --gold-700:  #8b6914;
+  --gold-600:  #b8890e;
+  --gold-500:  #d4a017;
+  --gold-400:  #e8bc30;
+  --gold-300:  #f5d060;
+  --gold-100:  #fef7d0;
+
+  /* ── Neutrals ── */
+  --neutral-950: #0a0804;
+  --neutral-900: #1c1510;
+  --neutral-800: #2e241a;
+  --neutral-700: #4a3828;
+  --neutral-600: #6b5540;
+  --neutral-500: #8c7260;
+  --neutral-400: #b09a88;
+  --neutral-300: #cfc0b0;
+  --neutral-200: #e5d8cc;
+  --neutral-100: #f2ece4;
+  --neutral-50:  #faf7f3;
+  --neutral-0:   #ffffff;
+
+  /* ── Semantic colours ── */
+  --clr-primary:     var(--brand-700);
+  --clr-primary-dk:  var(--brand-900);
+  --clr-accent:      var(--gold-500);
+  --clr-accent-lt:   var(--gold-100);
+  --clr-success:     #2d7a3a;
+  --clr-warning:     #c27d00;
+  --clr-error:       #b83232;
+  --clr-info:        #1a5f8a;
+
+  /* ── Text ── */
+  --text-primary:    var(--neutral-900);
+  --text-secondary:  var(--neutral-700);
+  --text-muted:      var(--neutral-500);
+  --text-inverse:    var(--neutral-0);
+  --text-on-brand:   var(--gold-300);
+
+  /* ── Backgrounds ── */
+  --bg-page:         var(--neutral-50);
+  --bg-card:         var(--neutral-0);
+  --bg-header:       var(--neutral-900);
+  --bg-footer:       var(--neutral-900);
+  --bg-sidebar:      var(--neutral-800);
+  --bg-input:        var(--neutral-0);
+
+  /* ── Typography ── */
+  --font-body:    'Georgia', 'Times New Roman', serif;
+  --font-ui:      'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono:    'Consolas', 'Courier New', monospace;
+
+  --fs-xs:    0.75rem;
+  --fs-sm:    0.875rem;
+  --fs-base:  1rem;
+  --fs-md:    1.125rem;
+  --fs-lg:    1.25rem;
+  --fs-xl:    1.5rem;
+  --fs-2xl:   1.875rem;
+  --fs-3xl:   2.25rem;
+  --fs-4xl:   3rem;
+
+  --fw-normal:  400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+  --fw-black:   900;
+
+  --lh-tight:   1.2;
+  --lh-normal:  1.5;
+  --lh-loose:   1.8;
+
+  /* ── Spacing ── */
+  --sp-1:  0.25rem;
+  --sp-2:  0.5rem;
+  --sp-3:  0.75rem;
+  --sp-4:  1rem;
+  --sp-5:  1.25rem;
+  --sp-6:  1.5rem;
+  --sp-8:  2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-20: 5rem;
+
+  /* ── Radii ── */
+  --r-sm:   4px;
+  --r-md:   8px;
+  --r-lg:   12px;
+  --r-xl:   16px;
+  --r-2xl:  24px;
+  --r-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 1px 3px rgba(26,10,0,.08);
+  --shadow-md:  0 4px 12px rgba(26,10,0,.12);
+  --shadow-lg:  0 8px 24px rgba(26,10,0,.16);
+  --shadow-xl:  0 16px 48px rgba(26,10,0,.20);
+
+  /* ── Transitions ── */
+  --ease-fast:    150ms ease;
+  --ease-normal:  250ms ease;
+  --ease-slow:    400ms ease;
+
+  /* ── Layout ── */
+  --container:    1200px;
+  --sidebar-w:    260px;
+  --topbar-h:     64px;
+}

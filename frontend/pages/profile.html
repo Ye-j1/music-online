@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — MusicOnline</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .profile-avatar-ring {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-900));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 2.2rem;
+      margin: 0 auto var(--sp-4);
+      box-shadow: 0 0 0 4px var(--gold-500), var(--shadow-md);
+    }
+    .profile-detail-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--sp-4) 0;
+      border-bottom: 1px solid var(--neutral-100);
+    }
+    .profile-detail-row:last-child { border-bottom: none; }
+    .profile-detail-label {
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-semi);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+    .profile-detail-val {
+      font-size: var(--fs-sm);
+      color: var(--text-primary);
+      font-weight: var(--fw-medium);
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ══════════ Sidebar ══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="home.html" class="sidebar-logo">
+      <div class="sidebar-logo-disc"></div>
+      <span class="sidebar-logo-text">Music<span>Online</span></span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a class="nav-item" href="search.html"><i class="fas fa-search"></i> Browse Vinyl</a>
+      <div class="nav-section">My Account</div>
+      <a class="nav-item" href="my-vinyls.html"><i class="fas fa-compact-disc"></i> My Listings</a>
+      <a class="nav-item" href="add-vinyl.html"><i class="fas fa-plus-circle"></i> Add Vinyl</a>
+      <a class="nav-item" href="my-orders.html"><i class="fas fa-shopping-bag"></i> My Orders</a>
+      <a class="nav-item active" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+      <div id="admin-nav-section" style="display:none">
+        <div class="nav-section">Admin</div>
+        <a class="nav-item" href="admin.html"><i class="fas fa-shield-alt"></i> Admin Panel</a>
+      </div>
+    </nav>
+    <div class="sidebar-user" onclick="moLogout && moLogout()">
+      <div class="sidebar-avatar"><i class="fas fa-user"></i></div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-username" id="sidebar-username">User</div>
+        <div class="sidebar-role" id="sidebar-role">user</div>
+      </div>
+      <i class="fas fa-sign-out-alt" style="color:rgba(255,255,255,.3);font-size:var(--fs-sm)"></i>
+    </div>
+  </aside>
+
+  <!-- ══════════ Main ══════════ -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title"><i class="fas fa-user" style="color:var(--brand-400)"></i> My Profile</div>
+    </header>
+
+    <main class="page-content">
+      <div style="max-width:560px;margin:0 auto">
+
+        <!-- Profile card -->
+        <div class="card" style="text-align:center;margin-bottom:var(--sp-5)">
+          <div class="profile-avatar-ring"><i class="fas fa-user"></i></div>
+          <h2 style="font-size:var(--fs-2xl);font-weight:var(--fw-black);margin-bottom:var(--sp-1)" id="profile-username">—</h2>
+          <div style="margin-bottom:var(--sp-2)" id="profile-role-badge"></div>
+          <div style="font-size:var(--fs-sm);color:var(--text-muted)" id="profile-email">—</div>
+        </div>
+
+        <!-- Account details -->
+        <div class="card">
+          <h3 style="font-size:var(--fs-base);font-weight:var(--fw-bold);margin-bottom:var(--sp-4)">
+            <i class="fas fa-id-card" style="color:var(--brand-500);margin-right:var(--sp-2)"></i>Account Details
+          </h3>
+          <div class="profile-detail-row">
+            <div class="profile-detail-label">Username</div>
+            <div class="profile-detail-val" id="detail-username">—</div>
+          </div>
+          <div class="profile-detail-row">
+            <div class="profile-detail-label">Email Address</div>
+            <div class="profile-detail-val" id="detail-email">—</div>
+          </div>
+          <div class="profile-detail-row">
+            <div class="profile-detail-label">Account Type</div>
+            <div class="profile-detail-val" id="detail-role">—</div>
+          </div>
+          <div class="profile-detail-row">
+            <div class="profile-detail-label">Session Status</div>
+            <div class="profile-detail-val">
+              <span class="badge badge-active"><i class="fas fa-circle" style="font-size:8px;margin-right:4px"></i> Signed in</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card" style="margin-top:var(--sp-4)">
+          <h3 style="font-size:var(--fs-base);font-weight:var(--fw-bold);margin-bottom:var(--sp-4)">
+            <i class="fas fa-cog" style="color:var(--brand-500);margin-right:var(--sp-2)"></i>Actions
+          </h3>
+          <div style="display:flex;gap:var(--sp-3);flex-wrap:wrap">
+            <a href="my-vinyls.html" class="btn btn-primary btn-sm">
+              <i class="fas fa-compact-disc"></i> My Listings
+            </a>
+            <a href="add-vinyl.html" class="btn btn-outline btn-sm">
+              <i class="fas fa-plus"></i> Add Vinyl
+            </a>
+            <button class="btn btn-danger btn-sm" onclick="moLogout && moLogout()">
+              <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</div>
+<div id="toast-container"></div>
+
+<script src="../js/api-base.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  /* ── Session check ── */
+  var user = requireLogin();
+  if (user) {
+    var unEl = document.getElementById('sidebar-username');
+    var rlEl = document.getElementById('sidebar-role');
+    if (unEl) unEl.textContent = user.username || user.email;
+    if (rlEl) rlEl.textContent = user.role;
+    if (user.role === 'ADMIN') document.getElementById('admin-nav-section').style.display = 'block';
+
+    /* Render profile */
+    document.getElementById('profile-username').textContent = user.username || user.email;
+    document.getElementById('profile-email').textContent    = user.email || '';
+    document.getElementById('detail-username').textContent  = user.username || '—';
+    document.getElementById('detail-email').textContent     = user.email    || '—';
+
+    /* Role badge */
+    var roleMap = { ADMIN: 'badge-admin', RETAILER: 'badge-retailer', USER: 'badge-user' };
+    var roleBadge = document.getElementById('profile-role-badge');
+    var detailRole = document.getElementById('detail-role');
+    var cls  = roleMap[user.role] || 'badge-neutral';
+    var html = '<span class="badge ' + cls + '">' + (user.role || 'USER') + '</span>';
+    roleBadge.innerHTML  = html;
+    detailRole.innerHTML = html;
+  }
+</script>
+</body>
+</html>

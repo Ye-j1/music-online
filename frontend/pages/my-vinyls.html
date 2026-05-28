@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Listings — MusicOnline</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ══════════ Sidebar ══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="home.html" class="sidebar-logo">
+      <div class="sidebar-logo-disc"></div>
+      <span class="sidebar-logo-text">Music<span>Online</span></span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a class="nav-item" href="search.html"><i class="fas fa-search"></i> Browse Vinyl</a>
+      <div class="nav-section">My Account</div>
+      <a class="nav-item active" href="my-vinyls.html"><i class="fas fa-compact-disc"></i> My Listings</a>
+      <a class="nav-item" href="add-vinyl.html"><i class="fas fa-plus-circle"></i> Add Vinyl</a>
+      <a class="nav-item" href="my-orders.html"><i class="fas fa-shopping-bag"></i> My Orders</a>
+      <a class="nav-item" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+      <div id="admin-nav-section" style="display:none">
+        <div class="nav-section">Admin</div>
+        <a class="nav-item" href="admin.html"><i class="fas fa-shield-alt"></i> Admin Panel</a>
+      </div>
+    </nav>
+    <div class="sidebar-user" onclick="moLogout && moLogout()">
+      <div class="sidebar-avatar"><i class="fas fa-user"></i></div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-username" id="sidebar-username">User</div>
+        <div class="sidebar-role" id="sidebar-role">user</div>
+      </div>
+      <i class="fas fa-sign-out-alt" style="color:rgba(255,255,255,.3);font-size:var(--fs-sm)"></i>
+    </div>
+  </aside>
+
+  <!-- ══════════ Main ══════════ -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title"><i class="fas fa-compact-disc" style="color:var(--brand-400)"></i> My Vinyl Listings</div>
+      <div class="topbar-actions">
+        <a href="add-vinyl.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Vinyl</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="vinyl-grid" id="my-vinyls-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:var(--sp-10)">
+          <div class="spinner" style="margin:0 auto"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</div>
+
+<!-- ══════════ Edit modal ══════════ -->
+<div class="modal-overlay" id="edit-modal" style="display:none" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-edit" style="color:var(--brand-500);margin-right:var(--sp-2)"></i>Edit Vinyl</div>
+      <button class="modal-close" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-form" onsubmit="return submitEdit(event)">
+        <input type="hidden" id="edit-id">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Title *</label>
+            <input class="form-input" id="edit-title" required maxlength="200">
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Artist *</label>
+            <input class="form-input" id="edit-artist" required maxlength="200">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type *</label>
+            <select class="form-select" id="edit-type">
+              <option value="ALBUM">Album</option>
+              <option value="EP">EP</option>
+              <option value="SINGLE">Single</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price (£) *</label>
+            <input class="form-input" type="number" step="0.01" min="0.01" id="edit-price" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Genre</label>
+            <input class="form-input" id="edit-genre" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Record Label</label>
+            <input class="form-input" id="edit-label-field" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Release Date</label>
+            <input class="form-input" type="date" id="edit-release-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Condition</label>
+            <select class="form-select" id="edit-condition">
+              <option value="">Select condition</option>
+              <option>Mint</option>
+              <option>Near Mint</option>
+              <option>Very Good</option>
+              <option>Good</option>
+              <option>Fair</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="edit-description" maxlength="1000"></textarea>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Cover Image URL</label>
+            <input class="form-input" id="edit-image-url" placeholder="https://…" maxlength="500">
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label style="display:flex;align-items:center;gap:var(--sp-2);cursor:pointer;font-size:var(--fs-sm);color:var(--text-secondary)">
+              <input type="checkbox" id="edit-available"> Available for sale
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:var(--sp-3);justify-content:flex-end;margin-top:var(--sp-4)">
+          <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="edit-submit-btn">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="../js/api-base.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  /* ── Session check ── */
+  var user = requireLogin();
+  var allMyVinyls = [];
+
+  if (user) {
+    var unEl = document.getElementById('sidebar-username');
+    var rlEl = document.getElementById('sidebar-role');
+    if (unEl) unEl.textContent = user.username || user.email;
+    if (rlEl) rlEl.textContent = user.role;
+    if (user.role === 'ADMIN') document.getElementById('admin-nav-section').style.display = 'block';
+    loadMyVinyls();
+  }
+
+  function loadMyVinyls() {
+    moApiFetch('/api/vinyls/mine')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        allMyVinyls = Array.isArray(data) ? data : [];
+        var grid = document.getElementById('my-vinyls-grid');
+        if (!allMyVinyls.length) {
+          grid.innerHTML =
+            '<div class="empty-state" style="grid-column:1/-1">' +
+            '<div class="icon"><i class="fas fa-compact-disc"></i></div>' +
+            '<h3>No listings yet</h3>' +
+            '<p><a href="add-vinyl.html" style="color:var(--brand-600);font-weight:600">Add your first vinyl listing</a></p>' +
+            '</div>';
+          return;
+        }
+        grid.innerHTML = '';
+        allMyVinyls.forEach(function (v) {
+          var wrap = document.createElement('div');
+          wrap.style.position = 'relative';
+
+          var card = buildVinylCard(v, function (vinyl) { openEditModal(vinyl); });
+
+          /* Action buttons */
+          var actions = document.createElement('div');
+          actions.style.cssText = 'position:absolute;top:8px;right:8px;display:flex;gap:4px;z-index:2';
+          actions.innerHTML =
+            '<button class="btn btn-sm btn-primary btn-icon" title="Edit" onclick="event.stopPropagation();openEditModalById(' + v.id + ')"><i class="fas fa-edit"></i></button>' +
+            '<button class="btn btn-sm btn-danger btn-icon" title="Delete" onclick="event.stopPropagation();deleteVinyl(' + v.id + ',\'' + escHtml(v.title).replace(/'/g, "&#39;") + '\')"><i class="fas fa-trash"></i></button>';
+
+          wrap.appendChild(card);
+          wrap.appendChild(actions);
+          grid.appendChild(wrap);
+        });
+      })
+      .catch(function () {
+        document.getElementById('my-vinyls-grid').innerHTML =
+          '<p style="grid-column:1/-1;color:var(--clr-error);padding:var(--sp-4)">' +
+          '<i class="fas fa-exclamation-circle"></i> Failed to load your listings. Is the server running?</p>';
+      });
+  }
+
+  /* ── Modal helpers ── */
+  function openEditModal(v) {
+    document.getElementById('edit-id').value             = v.id;
+    document.getElementById('edit-title').value          = v.title || '';
+    document.getElementById('edit-artist').value         = v.artist || '';
+    document.getElementById('edit-type').value           = v.type || 'ALBUM';
+    document.getElementById('edit-genre').value          = v.genre || '';
+    document.getElementById('edit-label-field').value    = v.label || '';
+    document.getElementById('edit-price').value          = v.price || '';
+    document.getElementById('edit-release-date').value   = v.releaseDate || '';
+    document.getElementById('edit-condition').value      = v.condition || '';
+    document.getElementById('edit-description').value    = v.description || '';
+    document.getElementById('edit-image-url').value      = v.imageUrl || '';
+    document.getElementById('edit-available').checked    = v.available !== false;
+    document.getElementById('edit-modal').style.display = 'flex';
+  }
+
+  function openEditModalById(id) {
+    var v = allMyVinyls.find(function (x) { return x.id === id; });
+    if (v) { openEditModal(v); return; }
+    moApiFetch('/api/public/vinyls/' + id)
+      .then(function (r) { return r.json(); })
+      .then(openEditModal);
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-modal').style.display = 'none';
+  }
+
+  /* ── Form: save edit (Task 3: form passing data to server) ── */
+  function submitEdit(e) {
+    e.preventDefault();
+    var id  = document.getElementById('edit-id').value;
+    var btn = document.getElementById('edit-submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+    var body = {
+      title:       document.getElementById('edit-title').value.trim(),
+      artist:      document.getElementById('edit-artist').value.trim(),
+      type:        document.getElementById('edit-type').value,
+      genre:       document.getElementById('edit-genre').value.trim() || null,
+      label:       document.getElementById('edit-label-field').value.trim() || null,
+      releaseDate: document.getElementById('edit-release-date').value || null,
+      price:       parseFloat(document.getElementById('edit-price').value),
+      condition:   document.getElementById('edit-condition').value || null,
+      description: document.getElementById('edit-description').value.trim() || null,
+      imageUrl:    document.getElementById('edit-image-url').value.trim() || null,
+      available:   document.getElementById('edit-available').checked
+    };
+
+    moApiFetch('/api/vinyls/' + id, { method: 'PUT', body: JSON.stringify(body) })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || d.message || 'Update failed'); });
+        return r.json();
+      })
+      .then(function () {
+        showToast('Vinyl updated successfully!', 'success');
+        closeEditModal();
+        loadMyVinyls();
+      })
+      .catch(function (err) {
+        showToast(err.message || 'Update failed', 'error');
+      })
+      .then(function () {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+      });
+    return false;
+  }
+
+  /* ── Delete ── */
+  function deleteVinyl(id, title) {
+    if (!confirm('Delete "' + title + '"?\nThis action cannot be undone.')) return;
+    moApiFetch('/api/vinyls/' + id, { method: 'DELETE' })
+      .then(function (r) {
+        if (!r.ok && r.status !== 204) return r.json().then(function (d) { throw new Error(d.error || 'Delete failed'); });
+      })
+      .then(function () {
+        showToast('"' + title + '" deleted.', 'success');
+        loadMyVinyls();
+      })
+      .catch(function (err) { showToast(err.message || 'Delete failed', 'error'); });
+  }
+</script>
+</body>
+</html>

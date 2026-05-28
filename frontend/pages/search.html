@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Vinyl Records — MusicOnline</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ── Search hero banner ── */
+    .search-banner {
+      background: var(--neutral-900);
+      padding: var(--sp-12) var(--sp-6);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .search-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(212,160,23,.12) 0%, transparent 70%);
+    }
+    .search-banner h1 {
+      font-size: var(--fs-3xl);
+      font-weight: var(--fw-black);
+      color: var(--neutral-0);
+      margin-bottom: var(--sp-2);
+      position: relative;
+    }
+    .search-banner p {
+      color: rgba(255,255,255,.5);
+      font-size: var(--fs-md);
+      margin-bottom: var(--sp-8);
+      position: relative;
+    }
+
+    /* ── Search form inside banner ── */
+    .search-form-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .search-row {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: stretch;
+    }
+    .search-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+    .search-input-wrap i {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,.4); pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      background: rgba(255,255,255,.1);
+      border: 1.5px solid rgba(255,255,255,.2);
+      border-radius: var(--r-md);
+      color: #fff;
+      font-size: var(--fs-base);
+      font-family: var(--font-ui);
+      transition: border-color var(--ease-fast), background var(--ease-fast);
+    }
+    .search-input::placeholder { color: rgba(255,255,255,.35); }
+    .search-input:focus {
+      border-color: var(--gold-400);
+      background: rgba(255,255,255,.15);
+      outline: none;
+    }
+    .type-filter {
+      padding: 0 16px;
+      background: rgba(255,255,255,.1);
+      border: 1.5px solid rgba(255,255,255,.2);
+      border-radius: var(--r-md);
+      color: #fff;
+      font-size: var(--fs-sm);
+      font-family: var(--font-ui);
+      cursor: pointer;
+      min-width: 130px;
+    }
+    .type-filter option { background: var(--neutral-800); }
+    .search-btn {
+      padding: 0 24px;
+      background: var(--gold-500);
+      color: var(--neutral-900);
+      border: none;
+      border-radius: var(--r-md);
+      font-weight: var(--fw-bold);
+      font-size: var(--fs-sm);
+      cursor: pointer;
+      transition: background var(--ease-fast);
+      white-space: nowrap;
+      letter-spacing: .02em;
+    }
+    .search-btn:hover { background: var(--gold-400); }
+
+    /* ── Results area ── */
+    .results-wrap {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: var(--sp-8) var(--sp-6);
+    }
+    .results-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--sp-6);
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+    }
+    .results-count {
+      font-size: var(--fs-sm);
+      color: var(--text-muted);
+    }
+    .results-count strong { color: var(--text-primary); }
+
+    @media (max-width: 640px) {
+      .search-row { flex-direction: column; }
+      .type-filter { min-width: 0; }
+      .results-wrap { padding: var(--sp-4); }
+      .search-banner h1 { font-size: var(--fs-2xl); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Public site header ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="home.html" class="header-brand">
+        <div class="header-disc"></div>
+        <span class="header-logo-text">Music<span>Online</span></span>
+      </a>
+      <nav class="header-nav" id="header-nav">
+        <a href="home.html">Home</a>
+        <a href="search.html" style="color:#fff">Browse</a>
+        <span id="header-auth-links"></span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Search banner ── -->
+  <section class="search-banner">
+    <h1><i class="fas fa-record-vinyl" style="color:var(--gold-400);margin-right:var(--sp-3)"></i>Search Vinyl Records</h1>
+    <p>Browse thousands of albums, EPs, and singles from sellers worldwide</p>
+    <!-- Search form — data passed via URL query string (Task 3: URL data passing) -->
+    <form class="search-form-wrap" id="search-form" onsubmit="return doSearch(event)">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <i class="fas fa-search"></i>
+          <input
+            class="search-input"
+            type="text"
+            id="search-q"
+            name="q"
+            placeholder="Artist, album or title..."
+            autocomplete="off"
+            maxlength="200"
+          >
+        </div>
+        <select class="type-filter" id="search-type" name="type">
+          <option value="">All Types</option>
+          <option value="ALBUM">Album</option>
+          <option value="EP">EP</option>
+          <option value="SINGLE">Single</option>
+        </select>
+        <button type="submit" class="search-btn">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ── Results ── -->
+  <div class="results-wrap">
+    <div class="results-meta">
+      <div class="results-count" id="results-meta"></div>
+    </div>
+    <div class="vinyl-grid" id="results-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:var(--sp-12)">
+        <div class="spinner" style="margin:0 auto"></div>
+      </div>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div style="display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-4)">
+          <div class="header-disc" style="width:28px;height:28px"></div>
+          <span style="color:#fff;font-weight:var(--fw-bold);font-size:var(--fs-md)">MusicOnline</span>
+        </div>
+        <p class="footer-desc">The marketplace for vinyl collectors and music lovers. Buy, sell and discover rare records.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Browse</h4>
+        <a href="search.html?type=ALBUM">Albums</a>
+        <a href="search.html?type=EP">EPs</a>
+        <a href="search.html?type=SINGLE">Singles</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="login.html">Sign In</a>
+        <a href="login.html#register">Register</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <h4>Sell</h4>
+        <a href="add-vinyl.html">List a Vinyl</a>
+        <a href="my-vinyls.html">My Listings</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 MusicOnline. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="../js/api-base.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    /* ── State ── */
+    var currentPage  = 0;
+    var totalPages   = 0;
+    var currentQ     = '';
+    var currentType  = '';
+
+    /* ── Parse URL parameters (Task 3: URL data passing) ── */
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var q    = params.get('q')    || '';
+      var type = params.get('type') || '';
+      document.getElementById('search-q').value    = q;
+      document.getElementById('search-type').value = type;
+      currentQ    = q.trim();
+      currentType = type;
+    })();
+
+    /* ── Header auth links ── */
+    (function () {
+      var user  = moGetUser ? moGetUser() : null;
+      var el    = document.getElementById('header-auth-links');
+      if (user && user.loggedIn) {
+        el.innerHTML = '<a href="dashboard.html" style="color:var(--gold-300)"><i class="fas fa-user"></i> My Account</a>';
+      } else {
+        el.innerHTML =
+          '<a href="login.html">Sign In</a>' +
+          '<a href="login.html#register" style="background:var(--gold-500);color:var(--neutral-900);padding:6px 14px;border-radius:var(--r-md);font-weight:var(--fw-semi)">Register</a>';
+      }
+    })();
+
+    /* ── Push current query to URL (Task 3: URL data passing) ── */
+    function pushToUrl(q, type, page) {
+      var params = new URLSearchParams();
+      if (q)    params.set('q', q);
+      if (type) params.set('type', type);
+      if (page) params.set('page', page);
+      var newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+      history.replaceState(null, '', newUrl);
+    }
+
+    /* ── Handle search form submit ── */
+    function doSearch(e) {
+      if (e) e.preventDefault();
+      currentQ    = document.getElementById('search-q').value.trim();
+      currentType = document.getElementById('search-type').value;
+      currentPage = 0;
+      loadResults();
+      return false;
+    }
+
+    /* ── Fetch and render results ── */
+    function loadResults() {
+      pushToUrl(currentQ, currentType, currentPage > 0 ? currentPage + 1 : '');
+
+      var grid = document.getElementById('results-grid');
+      grid.innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;padding:var(--sp-12)">' +
+        '<div class="spinner" style="margin:0 auto"></div></div>';
+
+      /* Build API URL — Task 3: SQL query behind this endpoint */
+      var url = '/api/public/vinyls?page=' + currentPage + '&size=24';
+      if (currentQ)    url += '&q='    + encodeURIComponent(currentQ);
+      if (currentType) url += '&type=' + encodeURIComponent(currentType);
+
+      fetch(moApiBaseUrl() + url)
+        .then(function (r) {
+          if (!r.ok) throw new Error('Server error ' + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          totalPages = data.totalPages || 0;
+          var total  = data.totalElements || 0;
+          var meta   = document.getElementById('results-meta');
+
+          if (currentQ) {
+            meta.innerHTML = 'Found <strong>' + total + '</strong> result' + (total !== 1 ? 's' : '') +
+              ' for &ldquo;' + escHtml(currentQ) + '&rdquo;' +
+              (currentType ? ' &nbsp;&bull;&nbsp; Type: <strong>' + escHtml(currentType) + '</strong>' : '');
+          } else {
+            meta.innerHTML = 'Showing <strong>' + total + '</strong> listing' + (total !== 1 ? 's' : '');
+          }
+
+          grid.innerHTML = '';
+          var items = data.content || [];
+          if (!items.length) {
+            grid.innerHTML =
+              '<div class="empty-state" style="grid-column:1/-1">' +
+              '<div class="icon"><i class="fas fa-record-vinyl"></i></div>' +
+              '<h3>No results found</h3>' +
+              '<p>Try different keywords, or ' +
+              '<a href="search.html" style="color:var(--brand-600);font-weight:600">browse everything</a></p></div>';
+            document.getElementById('pagination').innerHTML = '';
+            return;
+          }
+
+          items.forEach(function (v) {
+            var card = buildVinylCard(v, function (vinyl) {
+              /* Task 3: pass id via URL */
+              window.location.href = 'vinyl-detail.html?id=' + vinyl.id;
+            });
+            grid.appendChild(card);
+          });
+
+          renderPagination();
+        })
+        .catch(function (err) {
+          grid.innerHTML =
+            '<p style="grid-column:1/-1;text-align:center;color:var(--clr-error);padding:var(--sp-8)">' +
+            '<i class="fas fa-exclamation-circle"></i> ' + escHtml(err.message || 'Failed to load results. Is the server running?') +
+            '</p>';
+        });
+    }
+
+    /* ── Pagination ── */
+    function renderPagination() {
+      var el = document.getElementById('pagination');
+      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      var html = '';
+      html += '<button class="page-btn" onclick="changePage(' + (currentPage - 1) + ')" ' + (currentPage === 0 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
+      var start = Math.max(0, currentPage - 2);
+      var end   = Math.min(totalPages - 1, currentPage + 2);
+      if (start > 0) html += '<button class="page-btn" onclick="changePage(0)">1</button>' + (start > 1 ? '<span style="padding:0 4px;color:var(--text-muted)">…</span>' : '');
+      for (var i = start; i <= end; i++) {
+        html += '<button class="page-btn' + (i === currentPage ? ' active' : '') + '" onclick="changePage(' + i + ')">' + (i + 1) + '</button>';
+      }
+      if (end < totalPages - 1) html += (end < totalPages - 2 ? '<span style="padding:0 4px;color:var(--text-muted)">…</span>' : '') + '<button class="page-btn" onclick="changePage(' + (totalPages - 1) + ')">' + totalPages + '</button>';
+      html += '<button class="page-btn" onclick="changePage(' + (currentPage + 1) + ')" ' + (currentPage >= totalPages - 1 ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
+      el.innerHTML = html;
+    }
+
+    function changePage(p) {
+      if (p < 0 || p >= totalPages) return;
+      currentPage = p;
+      loadResults();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ── Boot ── */
+    loadResults();
+  </script>
+</body>
+</html>

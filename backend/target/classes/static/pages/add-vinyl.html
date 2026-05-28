@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Vinyl Listing — MusicOnline</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .add-form-card {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .form-section-title {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-semi);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      padding: var(--sp-3) 0 var(--sp-2);
+      border-bottom: 1px solid var(--neutral-200);
+      margin-bottom: var(--sp-4);
+    }
+    .preview-disc {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%,
+        var(--neutral-500) 0 18%,
+        var(--brand-700) 18% 100%
+      );
+      position: relative;
+      flex-shrink: 0;
+    }
+    .preview-disc::after {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--neutral-200);
+      box-shadow: 0 0 0 2px var(--gold-500);
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ══════════ Sidebar ══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="home.html" class="sidebar-logo">
+      <div class="sidebar-logo-disc"></div>
+      <span class="sidebar-logo-text">Music<span>Online</span></span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a class="nav-item" href="search.html"><i class="fas fa-search"></i> Browse Vinyl</a>
+      <div class="nav-section">My Account</div>
+      <a class="nav-item" href="my-vinyls.html"><i class="fas fa-compact-disc"></i> My Listings</a>
+      <a class="nav-item active" href="add-vinyl.html"><i class="fas fa-plus-circle"></i> Add Vinyl</a>
+      <a class="nav-item" href="my-orders.html"><i class="fas fa-shopping-bag"></i> My Orders</a>
+      <a class="nav-item" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+      <div id="admin-nav-section" style="display:none">
+        <div class="nav-section">Admin</div>
+        <a class="nav-item" href="admin.html"><i class="fas fa-shield-alt"></i> Admin Panel</a>
+      </div>
+    </nav>
+    <div class="sidebar-user" onclick="moLogout && moLogout()">
+      <div class="sidebar-avatar"><i class="fas fa-user"></i></div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-username" id="sidebar-username">User</div>
+        <div class="sidebar-role" id="sidebar-role">user</div>
+      </div>
+      <i class="fas fa-sign-out-alt" style="color:rgba(255,255,255,.3);font-size:var(--fs-sm)"></i>
+    </div>
+  </aside>
+
+  <!-- ══════════ Main ══════════ -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title"><i class="fas fa-plus-circle" style="color:var(--gold-500)"></i> Add Vinyl Listing</div>
+      <div class="topbar-actions">
+        <a href="my-vinyls.html" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> My Listings</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="add-form-card">
+
+        <!-- Intro strip -->
+        <div style="display:flex;align-items:center;gap:var(--sp-5);background:linear-gradient(135deg,var(--brand-50),var(--neutral-50));border:1px solid var(--brand-100);border-radius:var(--r-xl);padding:var(--sp-5) var(--sp-6);margin-bottom:var(--sp-6)">
+          <div class="preview-disc"></div>
+          <div>
+            <h2 style="font-size:var(--fs-lg);font-weight:var(--fw-bold);margin-bottom:var(--sp-1)">List a Vinyl Record</h2>
+            <p style="font-size:var(--fs-sm);color:var(--text-muted)">Fill in the details below. Fields marked <span style="color:var(--clr-error)">*</span> are required.</p>
+          </div>
+        </div>
+
+        <!-- Form — Task 3: form data passed to server via POST -->
+        <div class="card">
+          <form id="add-form" onsubmit="return submitAdd(event)" novalidate>
+
+            <div class="form-section-title">Record Details</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)">
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Title <span style="color:var(--clr-error)">*</span></label>
+                <input class="form-input" id="add-title"
+                       placeholder="e.g. Abbey Road"
+                       required maxlength="200"
+                       oninvalid="this.setCustomValidity('Please enter the vinyl title')"
+                       oninput="this.setCustomValidity('')">
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Artist <span style="color:var(--clr-error)">*</span></label>
+                <input class="form-input" id="add-artist"
+                       placeholder="e.g. The Beatles"
+                       required maxlength="200"
+                       oninvalid="this.setCustomValidity('Please enter the artist name')"
+                       oninput="this.setCustomValidity('')">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type <span style="color:var(--clr-error)">*</span></label>
+                <select class="form-select" id="add-type" required>
+                  <option value="ALBUM">Album</option>
+                  <option value="EP">EP</option>
+                  <option value="SINGLE">Single</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Price (£) <span style="color:var(--clr-error)">*</span></label>
+                <div class="form-input-wrap">
+                  <span class="icon" style="font-style:normal;font-weight:bold">£</span>
+                  <input class="form-input" type="number" id="add-price"
+                         step="0.01" min="0.01" max="99999"
+                         placeholder="0.00" required
+                         oninvalid="this.setCustomValidity('Please enter a valid price')"
+                         oninput="this.setCustomValidity('')">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Genre</label>
+                <input class="form-input" id="add-genre" placeholder="e.g. Rock, Jazz, Classical" maxlength="100">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Record Label</label>
+                <input class="form-input" id="add-label" placeholder="e.g. EMI, Columbia" maxlength="100">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Release Date</label>
+                <input class="form-input" type="date" id="add-release-date">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Condition</label>
+                <select class="form-select" id="add-condition">
+                  <option value="">Select condition</option>
+                  <option>Mint</option>
+                  <option>Near Mint</option>
+                  <option>Very Good</option>
+                  <option>Good</option>
+                  <option>Fair</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-section-title" style="margin-top:var(--sp-4)">Additional Info</div>
+            <div class="form-group" style="margin-bottom:var(--sp-4)">
+              <label class="form-label">Description</label>
+              <textarea class="form-textarea" id="add-description"
+                        placeholder="Describe the vinyl — pressing details, sleeve condition, any history…"
+                        maxlength="1000" rows="4"></textarea>
+              <span class="form-hint">Up to 1,000 characters</span>
+            </div>
+            <div class="form-group" style="margin-bottom:var(--sp-5)">
+              <label class="form-label">Cover Image URL</label>
+              <input class="form-input" id="add-image-url"
+                     placeholder="https://example.com/cover.jpg"
+                     type="url" maxlength="500">
+              <span class="form-hint">Optional. Paste a direct link to a cover image.</span>
+            </div>
+
+            <div style="display:flex;gap:var(--sp-3);justify-content:flex-end">
+              <a href="my-vinyls.html" class="btn btn-ghost">Cancel</a>
+              <button type="submit" class="btn btn-primary" id="add-submit-btn">
+                <i class="fas fa-plus-circle"></i> Add Listing
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</div>
+<div id="toast-container"></div>
+
+<script src="../js/api-base.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  /* ── Session check ── */
+  var user = requireLogin();
+  if (user) {
+    var unEl = document.getElementById('sidebar-username');
+    var rlEl = document.getElementById('sidebar-role');
+    if (unEl) unEl.textContent = user.username || user.email;
+    if (rlEl) rlEl.textContent = user.role;
+    if (user.role === 'ADMIN') document.getElementById('admin-nav-section').style.display = 'block';
+  }
+
+  /* ── Form submission (Task 3: form data posted to server) ── */
+  function submitAdd(e) {
+    e.preventDefault();
+
+    var titleVal  = document.getElementById('add-title').value.trim();
+    var artistVal = document.getElementById('add-artist').value.trim();
+    var priceVal  = parseFloat(document.getElementById('add-price').value);
+
+    /* Client-side validation (Task 3: security on forms) */
+    if (!titleVal)      { showToast('Title is required', 'error'); return false; }
+    if (!artistVal)     { showToast('Artist is required', 'error'); return false; }
+    if (isNaN(priceVal) || priceVal <= 0) { showToast('Please enter a valid price', 'error'); return false; }
+
+    var btn = document.getElementById('add-submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding…';
+
+    var body = {
+      title:       titleVal,
+      artist:      artistVal,
+      type:        document.getElementById('add-type').value,
+      genre:       document.getElementById('add-genre').value.trim()       || null,
+      label:       document.getElementById('add-label').value.trim()       || null,
+      releaseDate: document.getElementById('add-release-date').value       || null,
+      price:       priceVal,
+      condition:   document.getElementById('add-condition').value          || null,
+      description: document.getElementById('add-description').value.trim() || null,
+      imageUrl:    document.getElementById('add-image-url').value.trim()   || null,
+      available:   true
+    };
+
+    moApiFetch('/api/vinyls', { method: 'POST', body: JSON.stringify(body) })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || d.message || 'Failed to add vinyl'); });
+        return r.json();
+      })
+      .then(function (v) {
+        showToast('"' + escHtml(v.title) + '" listed successfully!', 'success');
+        document.getElementById('add-form').reset();
+        setTimeout(function () { window.location.href = 'my-vinyls.html'; }, 1200);
+      })
+      .catch(function (err) {
+        showToast(err.message || 'Failed to add vinyl. Is the server running?', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-plus-circle"></i> Add Listing';
+      });
+
+    return false;
+  }
+</script>
+</body>
+</html>

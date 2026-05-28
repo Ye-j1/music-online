@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MusicOnline — Sign In / Register</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background: var(--neutral-100); }
+
+    .auth-wrap {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── Left panel ── */
+    .auth-left {
+      background: var(--neutral-900);
+      color: #fff;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: var(--sp-12) var(--sp-12);
+      position: relative; overflow: hidden;
+    }
+    .auth-disc-bg {
+      position: absolute; right: -120px; bottom: -120px;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%,
+        var(--neutral-700)  0  15%,
+        var(--brand-800)   15% 30%,
+        var(--neutral-800) 30% 45%,
+        var(--brand-700)   45% 60%,
+        var(--neutral-900) 60% 100%
+      );
+      opacity: .35;
+    }
+    .auth-disc-bg::after {
+      content: ''; position: absolute; inset: 40%; border-radius: 50%;
+      background: var(--neutral-900); border: 6px solid var(--neutral-700);
+    }
+    .auth-left-content { position: relative; z-index: 1; }
+    .auth-brand {
+      display: flex; align-items: center; gap: var(--sp-3);
+      margin-bottom: var(--sp-10);
+    }
+    .auth-brand-disc {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, var(--neutral-500) 0 25%, var(--brand-600) 25% 100%);
+      position: relative; box-shadow: 0 0 0 3px var(--gold-500);
+    }
+    .auth-brand-disc::after {
+      content:''; position:absolute; inset:35%; border-radius:50%; background:var(--neutral-700);
+    }
+    .auth-brand-name { font-size: var(--fs-xl); font-weight: var(--fw-bold); }
+    .auth-brand-name span { color: var(--gold-400); }
+    .auth-headline {
+      font-size: var(--fs-3xl); font-weight: var(--fw-black);
+      line-height: var(--lh-tight); letter-spacing: -.03em;
+      margin-bottom: var(--sp-4);
+    }
+    .auth-headline em { font-style: normal; color: var(--gold-400); }
+    .auth-desc { color: rgba(255,255,255,.5); font-size: var(--fs-sm); line-height: var(--lh-loose); margin-bottom: var(--sp-8); }
+    .auth-features { display: flex; flex-direction: column; gap: var(--sp-3); }
+    .auth-feat {
+      display: flex; align-items: center; gap: var(--sp-3);
+      font-size: var(--fs-sm); color: rgba(255,255,255,.6);
+    }
+    .auth-feat-icon {
+      width: 32px; height: 32px; border-radius: var(--r-md);
+      background: rgba(212,160,23,.15); color: var(--gold-400);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--fs-sm); flex-shrink: 0;
+    }
+
+    /* ── Right panel ── */
+    .auth-right {
+      background: var(--neutral-0);
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: var(--sp-12) var(--sp-10);
+      overflow-y: auto;
+    }
+    .auth-back {
+      display: inline-flex; align-items: center; gap: var(--sp-2);
+      font-size: var(--fs-sm); color: var(--text-muted);
+      margin-bottom: var(--sp-8);
+      text-decoration: none;
+      transition: color var(--ease-fast);
+    }
+    .auth-back:hover { color: var(--text-primary); }
+    .auth-form-wrap { max-width: 420px; width: 100%; }
+    .auth-tabs {
+      display: flex; gap: 4px;
+      margin-bottom: var(--sp-6);
+      background: var(--neutral-100);
+      border-radius: var(--r-lg);
+      padding: 4px;
+    }
+    .auth-tab {
+      flex: 1; padding: 9px;
+      text-align: center; font-size: var(--fs-sm); font-weight: var(--fw-semi);
+      border-radius: var(--r-md); cursor: pointer;
+      color: var(--text-muted); transition: all var(--ease-fast);
+      border: none; background: none;
+    }
+    .auth-tab.active { background: var(--neutral-0); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+    .auth-form-title { font-size: var(--fs-xl); font-weight: var(--fw-bold); margin-bottom: var(--sp-1); }
+    .auth-form-sub { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: var(--sp-6); }
+    .auth-form { display: flex; flex-direction: column; gap: var(--sp-4); }
+    .auth-demo-hint {
+      background: var(--brand-50); border: 1px solid var(--brand-200);
+      border-radius: var(--r-md); padding: var(--sp-3) var(--sp-4);
+      font-size: var(--fs-xs); color: var(--brand-700);
+      margin-bottom: var(--sp-4);
+    }
+    .auth-demo-hint strong { font-weight: var(--fw-semi); }
+    .auth-divider {
+      text-align: center; color: var(--text-muted);
+      font-size: var(--fs-xs); position: relative; margin: var(--sp-2) 0;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; position: absolute; top: 50%; width: 45%;
+      height: 1px; background: var(--neutral-200);
+    }
+    .auth-divider::before { left: 0; }
+    .auth-divider::after { right: 0; }
+    .auth-switch { text-align: center; font-size: var(--fs-sm); color: var(--text-muted); }
+    .auth-switch a { color: var(--brand-600); font-weight: var(--fw-semi); cursor: pointer; }
+
+    /* Account type selector */
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+    .role-option {
+      border: 2px solid var(--neutral-200);
+      border-radius: var(--r-lg); padding: var(--sp-4);
+      cursor: pointer; transition: all var(--ease-fast);
+      text-align: center;
+    }
+    .role-option:hover { border-color: var(--brand-400); background: var(--brand-50); }
+    .role-option.selected { border-color: var(--brand-700); background: var(--brand-50); }
+    .role-option i { font-size: var(--fs-xl); color: var(--text-muted); display: block; margin-bottom: var(--sp-2); }
+    .role-option.selected i { color: var(--brand-600); }
+    .role-name { font-size: var(--fs-sm); font-weight: var(--fw-semi); color: var(--text-primary); }
+    .role-desc { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 2px; }
+    .payment-section {
+      background: #fff8e1; border: 1px solid #ffe082;
+      border-radius: var(--r-md); padding: var(--sp-3) var(--sp-4);
+      margin-top: var(--sp-3); display: none;
+    }
+    .payment-section.visible { display: block; }
+    .payment-section p { font-size: var(--fs-sm); color: #5d4037; margin: 0 0 var(--sp-2); }
+    .payment-amount {
+      font-size: var(--fs-xl); font-weight: var(--fw-bold); color: #d84315;
+      margin: var(--sp-2) 0;
+    }
+    .payment-confirmed {
+      background: #e8f5e9; border: 1px solid #a5d6a7;
+      border-radius: var(--r-md); padding: var(--sp-3);
+      display: none; align-items: center; gap: var(--sp-2);
+      font-size: var(--fs-sm); color: #2e7d32;
+    }
+    .payment-confirmed.visible { display: flex; }
+    /* Payment modal */
+    .payment-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .payment-modal-overlay.visible { display: flex; }
+    .payment-modal {
+      background: #fff; border-radius: var(--r-lg);
+      padding: var(--sp-8) var(--sp-8); text-align: center;
+      max-width: 360px; width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .payment-modal h3 { margin: 0 0 var(--sp-2); font-size: var(--fs-lg); }
+    .payment-modal .payment-amount-big {
+      font-size: var(--fs-2xl); font-weight: var(--fw-bold);
+      color: #d84315; margin: var(--sp-2) 0 var(--sp-4);
+    }
+    .qr-placeholder {
+      background: #f5f5f5; border: 2px dashed #ccc;
+      border-radius: var(--r-md); padding: var(--sp-4);
+      margin: var(--sp-4) 0; display: inline-block;
+    }
+    .qr-placeholder i { font-size: 80px; color: #bbb; }
+    .payment-modal .btn { width: 100%; margin-top: var(--sp-3); }
+    .payment-modal .btn-cancel {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--neutral-300); margin-top: var(--sp-2);
+    }
+
+    @media(max-width:768px) {
+      .auth-wrap { grid-template-columns: 1fr; }
+      .auth-left { display: none; }
+      .auth-right { padding: var(--sp-8) var(--sp-6); }
+    }
+  </style>
+</head>
+<body>
+<div class="auth-wrap">
+
+  <!-- Left -->
+  <div class="auth-left">
+    <div class="auth-disc-bg"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <div class="auth-brand-disc"></div>
+        <span class="auth-brand-name">Music<span>Online</span></span>
+      </div>
+      <h2 class="auth-headline">Your Vinyl<br><em>Marketplace</em></h2>
+      <p class="auth-desc">Buy and sell vinyl records — albums, EPs and singles — with collectors and retailers around the world.</p>
+      <div class="auth-features">
+        <div class="auth-feat"><div class="auth-feat-icon"><i class="fas fa-search"></i></div><span>Search by artist, album, EP or single</span></div>
+        <div class="auth-feat"><div class="auth-feat-icon"><i class="fas fa-compact-disc"></i></div><span>List your vinyl for sale instantly</span></div>
+        <div class="auth-feat"><div class="auth-feat-icon"><i class="fas fa-shield-alt"></i></div><span>Administrator-monitored listings</span></div>
+        <div class="auth-feat"><div class="auth-feat-icon"><i class="fas fa-users"></i></div><span>A community of music lovers</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div class="auth-right">
+    <a href="home.html" class="auth-back"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+    <div class="auth-form-wrap">
+      <!-- Tab switcher -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="showLogin()">Sign In</button>
+        <button class="auth-tab" id="tab-register" onclick="showRegister()">Create Account</button>
+      </div>
+
+      <!-- ── Login Form ── -->
+      <div id="login-panel">
+        <h2 class="auth-form-title">Welcome Back</h2>
+        <p class="auth-form-sub">Sign in to your MusicOnline account</p>
+
+        <div class="auth-demo-hint">
+          <strong>Demo accounts</strong> — all passwords are <strong>password</strong><br>
+          Admin: <code>admin@musiconline.com</code>
+        </div>
+
+        <form class="auth-form" id="login-form" onsubmit="return handleLogin(event)">
+          <!-- Security: input validation on all forms — Task 3 -->
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <div class="form-input-wrap">
+              <i class="fas fa-envelope icon"></i>
+              <input type="email" class="form-input" id="login-email"
+                     placeholder="you@example.com" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <div class="form-input-wrap" style="position:relative">
+              <i class="fas fa-lock icon"></i>
+              <input type="password" class="form-input" id="login-password"
+                     placeholder="Enter your password" required autocomplete="current-password">
+              <button type="button" class="input-toggle-btn" onclick="togglePwd('login-password',this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:var(--fs-xs)">
+            <label style="display:flex;align-items:center;gap:var(--sp-2);cursor:pointer;color:var(--text-muted)">
+              <input type="checkbox" id="remember-me" checked> Remember me
+            </label>
+            <a href="#" style="color:var(--brand-600)">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary auth-submit" id="login-btn" style="width:100%;margin-top:var(--sp-2)">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+          <div class="auth-divider">or</div>
+          <p class="auth-switch">Don't have an account? <a onclick="showRegister()">Create Account</a></p>
+        </form>
+      </div>
+
+      <!-- ── Register Form ── -->
+      <div id="register-panel" style="display:none">
+        <h2 class="auth-form-title">Create Account</h2>
+        <p class="auth-form-sub">Join MusicOnline for free</p>
+
+        <form class="auth-form" id="register-form" onsubmit="return handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label">Account Type</label>
+            <div class="role-grid">
+              <div class="role-option" data-role="user" onclick="selectRole(this)" tabindex="0">
+                <i class="fas fa-user"></i>
+                <div class="role-name">Buyer / Collector</div>
+                <div class="role-desc">Free registration</div>
+              </div>
+              <div class="role-option" data-role="retailer" onclick="selectRole(this)" tabindex="0">
+                <i class="fas fa-store"></i>
+                <div class="role-name">Retailer</div>
+                <div class="role-desc">Paid registration</div>
+              </div>
+            </div>
+          </div>
+          <!-- Payment section for Retailer -->
+          <div class="payment-section" id="payment-section">
+            <p><i class="fas fa-info-circle" style="color:#f9a825"></i>
+              Retailer registration requires a one-time fee.</p>
+            <div class="payment-amount">$100</div>
+            <button type="button" class="btn btn-warning" style="width:100%" onclick="openPaymentModal()">
+              <i class="fas fa-credit-card"></i> Pay Registration Fee
+            </button>
+            <div class="payment-confirmed" id="payment-confirmed">
+              <i class="fas fa-check-circle" style="color:#2e7d32;font-size:18px"></i>
+              Payment completed — you can now create your Retailer account.
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address</label>
+            <div class="form-input-wrap">
+              <i class="fas fa-envelope icon"></i>
+              <input type="email" class="form-input" id="reg-email"
+                     placeholder="you@example.com" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-username">Username</label>
+            <div class="form-input-wrap">
+              <i class="fas fa-user icon"></i>
+              <input type="text" class="form-input" id="reg-username"
+                     placeholder="Choose a username" required minlength="3" maxlength="50" autocomplete="username">
+            </div>
+            <span class="form-hint">3–50 characters, shown on your listings</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password</label>
+            <div class="form-input-wrap" style="position:relative">
+              <i class="fas fa-lock icon"></i>
+              <input type="password" class="form-input" id="reg-password"
+                     placeholder="At least 8 characters" required minlength="8" autocomplete="new-password">
+              <button type="button" class="input-toggle-btn" onclick="togglePwd('reg-password',this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <span class="form-hint">Minimum 8 characters</span>
+          </div>
+          <button type="submit" class="btn btn-primary auth-submit" id="register-btn" style="width:100%;margin-top:var(--sp-2)">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+          <div class="auth-divider">or</div>
+          <p class="auth-switch">Already have an account? <a onclick="showLogin()">Sign In</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div id="toast-container"></div>
+
+<!-- Payment Modal -->
+<div class="payment-modal-overlay" id="payment-modal">
+  <div class="payment-modal">
+    <h3><i class="fas fa-qrcode" style="color:var(--brand-600)"></i> Scan to Pay</h3>
+    <div class="payment-amount-big">$100</div>
+    <div class="qr-placeholder">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=MusicOnline-Retailer-Registration-100USD"
+           alt="Payment QR Code" width="160" height="160"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <i class="fas fa-qrcode" style="display:none;font-size:80px;color:#bbb"></i>
+    </div>
+    <p style="font-size:var(--fs-sm);color:var(--text-muted);margin:0 0 var(--sp-4)">
+      Scan the QR code with your payment app
+    </p>
+    <button type="button" class="btn btn-success" onclick="confirmPayment()">
+      <i class="fas fa-check"></i> Payment Completed
+    </button>
+    <button type="button" class="btn btn-cancel" onclick="closePaymentModal()">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<script src="../js/api-base.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  // ── Tab switching ──
+  function showLogin() {
+    document.getElementById('login-panel').style.display = 'block';
+    document.getElementById('register-panel').style.display = 'none';
+    document.getElementById('tab-login').classList.add('active');
+    document.getElementById('tab-register').classList.remove('active');
+    if (window.location.hash === '#register') history.replaceState(null,'','login.html');
+  }
+  function showRegister() {
+    document.getElementById('login-panel').style.display = 'none';
+    document.getElementById('register-panel').style.display = 'block';
+    document.getElementById('tab-login').classList.remove('active');
+    document.getElementById('tab-register').classList.add('active');
+    if (window.location.hash !== '#register') history.replaceState(null,'','login.html#register');
+  }
+  // Apply hash on load
+  if (window.location.hash === '#register') showRegister();
+  window.addEventListener('hashchange', function(){
+    if (window.location.hash === '#register') showRegister(); else showLogin();
+  });
+
+  // ── Password toggle ──
+  function togglePwd(id, btn) {
+    var el = document.getElementById(id);
+    var ic = btn.querySelector('i');
+    if (el.type === 'password') { el.type='text'; ic.classList.replace('fa-eye','fa-eye-slash'); }
+    else { el.type='password'; ic.classList.replace('fa-eye-slash','fa-eye'); }
+  }
+
+  // ── Role selection ──
+  function selectRole(el) {
+    document.querySelectorAll('.role-option').forEach(function(r){r.classList.remove('selected');});
+    el.classList.add('selected');
+    // Show/hide payment section for retailer
+    var isRetailer = el.getAttribute('data-role') === 'retailer';
+    var ps = document.getElementById('payment-section');
+    if (ps) ps.classList.toggle('visible', isRetailer);
+    // Reset payment state when switching role
+    if (!isRetailer) {
+      window.retailerPaid = false;
+      var pc = document.getElementById('payment-confirmed');
+      if (pc) pc.classList.remove('visible');
+    }
+  }
+
+  // ── Payment modal ──
+  function openPaymentModal() {
+    document.getElementById('payment-modal').classList.add('visible');
+  }
+  function closePaymentModal() {
+    document.getElementById('payment-modal').classList.remove('visible');
+  }
+  function confirmPayment() {
+    window.retailerPaid = true;
+    document.getElementById('payment-modal').classList.remove('visible');
+    document.getElementById('payment-section').classList.remove('visible');
+    document.getElementById('payment-confirmed').classList.add('visible');
+  }
+
+  // Close modal on overlay click
+  document.getElementById('payment-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePaymentModal();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MusicOnline — Buy &amp; Sell Vinyl Records</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ── Hero ── */
+    .hero {
+      min-height: 620px;
+      background: var(--neutral-900);
+      color: #fff;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg-disc {
+      position: absolute; right: -80px; top: 50%; transform: translateY(-50%);
+      width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%,
+        var(--neutral-700)  0  15%,
+        var(--brand-800)   15% 30%,
+        var(--neutral-800) 30% 45%,
+        var(--brand-700)   45% 60%,
+        var(--neutral-900) 60% 75%,
+        var(--brand-900)   75% 100%
+      );
+      opacity: .35;
+    }
+    .hero-bg-disc::after {
+      content: ''; position: absolute; inset: 42%; border-radius: 50%;
+      background: var(--neutral-900); border: 8px solid var(--neutral-700);
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+      max-width: var(--container);
+      margin: 0 auto; padding: var(--sp-20) var(--sp-6);
+      width: 100%;
+    }
+    .hero-label {
+      display: inline-flex; align-items: center; gap: var(--sp-2);
+      font-size: var(--fs-xs); font-weight: var(--fw-semi);
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold-400);
+      border: 1px solid var(--gold-700);
+      padding: 5px 14px; border-radius: var(--r-full);
+      margin-bottom: var(--sp-5);
+    }
+    .hero-title {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: var(--fw-black);
+      line-height: 1.05; letter-spacing: -.03em;
+      margin-bottom: var(--sp-6); max-width: 680px;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--gold-400);
+    }
+    .hero-sub {
+      font-size: var(--fs-md); color: rgba(255,255,255,.6);
+      line-height: var(--lh-loose); margin-bottom: var(--sp-8);
+      max-width: 540px;
+    }
+    /* Search bar in hero */
+    .hero-search {
+      max-width: 560px;
+      background: rgba(255,255,255,.07);
+      border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: var(--r-lg);
+      display: flex; overflow: hidden;
+      margin-bottom: var(--sp-8);
+      backdrop-filter: blur(8px);
+    }
+    .hero-search input {
+      flex: 1; padding: 14px 18px;
+      background: none; color: #fff;
+      font-size: var(--fs-base); font-family: var(--font-ui);
+    }
+    .hero-search input::placeholder { color: rgba(255,255,255,.4); }
+    .hero-search select {
+      padding: 0 14px;
+      background: rgba(255,255,255,.08);
+      border-left: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.7);
+      font-size: var(--fs-sm);
+      cursor: pointer;
+    }
+    .hero-search select option { background: var(--neutral-800); }
+    .hero-search button {
+      padding: 0 24px;
+      background: var(--gold-500);
+      color: var(--neutral-900);
+      font-weight: var(--fw-bold);
+      font-size: var(--fs-sm);
+      cursor: pointer; white-space: nowrap;
+      transition: background var(--ease-fast);
+    }
+    .hero-search button:hover { background: var(--gold-600); }
+    .hero-cta { display: flex; gap: var(--sp-3); flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: var(--sp-8);
+      margin-top: var(--sp-12); flex-wrap: wrap;
+    }
+    .hero-stat .val {
+      font-size: var(--fs-2xl); font-weight: var(--fw-black);
+      color: var(--gold-400);
+    }
+    .hero-stat .lbl { font-size: var(--fs-xs); color: rgba(255,255,255,.4); margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ── Section titles ── */
+    .section { padding: var(--sp-16) var(--sp-6); max-width: var(--container); margin: 0 auto; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-8); flex-wrap: wrap; gap: var(--sp-3); }
+    .section-title { font-size: var(--fs-2xl); font-weight: var(--fw-black); letter-spacing: -.02em; }
+    .section-title span { color: var(--brand-500); }
+    .section-subtitle { font-size: var(--fs-sm); color: var(--text-muted); margin-top: var(--sp-1); }
+
+    /* ── Why choose us ── */
+    .why-section { background: var(--neutral-900); color: #fff; padding: var(--sp-16) var(--sp-6); }
+    .why-inner { max-width: var(--container); margin: 0 auto; }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: var(--sp-6); margin-top: var(--sp-10); }
+    .why-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--r-xl);
+      padding: var(--sp-6);
+      transition: border-color var(--ease-normal);
+    }
+    .why-card:hover { border-color: var(--gold-700); }
+    .why-icon {
+      width: 52px; height: 52px; border-radius: var(--r-lg);
+      background: rgba(212,160,23,.15);
+      color: var(--gold-400);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--fs-xl); margin-bottom: var(--sp-4);
+    }
+    .why-card h3 { font-size: var(--fs-base); font-weight: var(--fw-semi); color: #fff; margin-bottom: var(--sp-2); }
+    .why-card p { font-size: var(--fs-sm); color: rgba(255,255,255,.45); line-height: var(--lh-loose); }
+
+    /* ── How it works ── */
+    .how-section { background: var(--brand-50); padding: var(--sp-16) var(--sp-6); }
+    .how-inner { max-width: var(--container); margin: 0 auto; }
+    .how-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: var(--sp-6); margin-top: var(--sp-10); }
+    .how-step { text-align: center; padding: var(--sp-6); }
+    .how-num {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: var(--brand-700); color: var(--neutral-0);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--fs-xl); font-weight: var(--fw-black);
+      margin: 0 auto var(--sp-4);
+    }
+    .how-step h3 { font-size: var(--fs-base); font-weight: var(--fw-semi); color: var(--text-primary); margin-bottom: var(--sp-2); }
+    .how-step p { font-size: var(--fs-sm); color: var(--text-muted); line-height: var(--lh-loose); }
+
+    /* ── CTA band ── */
+    .cta-band {
+      background: linear-gradient(120deg, var(--brand-800), var(--brand-600));
+      color: #fff; padding: var(--sp-16) var(--sp-6);
+      text-align: center;
+    }
+    .cta-band h2 { font-size: var(--fs-3xl); font-weight: var(--fw-black); margin-bottom: var(--sp-3); }
+    .cta-band p { font-size: var(--fs-md); opacity: .7; margin-bottom: var(--sp-8); max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-band-btns { display: flex; gap: var(--sp-4); justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="home.html" class="header-brand">
+        <div class="header-disc"></div>
+        <span class="header-logo-text">Music<span>Online</span></span>
+      </a>
+      <nav class="header-nav" id="header-nav">
+        <a href="search.html"><i class="fas fa-search"></i> Browse Vinyl</a>
+        <a href="#how">How It Works</a>
+        <a href="login.html#register">Register</a>
+        <a href="login.html" class="btn btn-gold btn-sm" style="margin-left:var(--sp-2)">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg-disc"></div>
+    <div class="hero-content">
+      <div class="hero-label"><i class="fas fa-record-vinyl"></i> The Vinyl Marketplace</div>
+      <h1 class="hero-title">Discover &amp; Sell<br><em>Vinyl Records</em><br>You Love</h1>
+      <p class="hero-sub">Search albums, EPs and singles from collectors and retailers. List your own records for sale and connect with music lovers worldwide.</p>
+
+      <!-- Search form passes data via URL — Task 3 requirement -->
+      <form class="hero-search" id="hero-search-form" onsubmit="return heroSearch(event)">
+        <input type="text" id="hero-q" name="q" placeholder="Search artist, album or title..." autocomplete="off">
+        <select id="hero-type" name="type">
+          <option value="all">All Types</option>
+          <option value="ALBUM">Album</option>
+          <option value="EP">EP</option>
+          <option value="SINGLE">Single</option>
+        </select>
+        <button type="submit"><i class="fas fa-search"></i> Search</button>
+      </form>
+
+      <div class="hero-cta">
+        <a href="search.html" class="btn btn-white btn-lg"><i class="fas fa-compact-disc"></i> Browse All</a>
+        <a href="login.html#register" class="btn btn-outline-white btn-lg"><i class="fas fa-user-plus"></i> Start Selling</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="val" id="stat-listings">18+</div><div class="lbl">Listings</div></div>
+        <div class="hero-stat"><div class="val">3</div><div class="lbl">Formats</div></div>
+        <div class="hero-stat"><div class="val">2026</div><div class="lbl">Established</div></div>
+        <div class="hero-stat"><div class="val">100%</div><div class="lbl">Secure</div></div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Why MusicOnline -->
+  <section class="why-section">
+    <div class="why-inner">
+      <div style="text-align:center">
+        <div class="hero-label" style="justify-content:center;margin-bottom:var(--sp-4)"><i class="fas fa-star"></i> Why Choose Us</div>
+        <h2 style="font-size:var(--fs-2xl);font-weight:var(--fw-black);color:#fff;margin-bottom:var(--sp-3)">The Best Place for Vinyl</h2>
+        <p style="color:rgba(255,255,255,.45);max-width:540px;margin:0 auto;font-size:var(--fs-sm)">Whether you're a buyer, collector or retailer, MusicOnline gives you everything you need.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-search"></i></div>
+          <h3>Powerful Search</h3>
+          <p>Search by artist, album, EP or single title. Filter by format to find exactly what you need.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-compact-disc"></i></div>
+          <h3>Add &amp; Manage Listings</h3>
+          <p>Registered users can add, edit and delete their vinyl listings at any time.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Admin Monitored</h3>
+          <p>All listings are reviewed by our administrators. A secure environment you can trust.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon"><i class="fas fa-store"></i></div>
+          <h3>For Retailers Too</h3>
+          <p>Retailers pay a one-time registration fee to unlock professional selling features.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-section" id="how">
+    <div class="how-inner">
+      <div style="text-align:center">
+        <h2 style="font-size:var(--fs-2xl);font-weight:var(--fw-black);margin-bottom:var(--sp-3)">How It <span style="color:var(--brand-600)">Works</span></h2>
+        <p style="color:var(--text-muted);max-width:480px;margin:0 auto;font-size:var(--fs-sm)">Getting started with MusicOnline is quick and easy</p>
+      </div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <h3>Register</h3>
+          <p>Create a free account as a buyer / collector, or a paid retailer account to list records for sale.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <h3>Search</h3>
+          <p>Search by artist, album, EP or single title. Click any result to view full details and pricing.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <h3>List &amp; Sell</h3>
+          <p>Add your vinyl listings with price, condition, genre and cover image. Edit or remove anytime.</p>
+        </div>
+          <div class="how-step">
+          <div class="how-num">4</div>
+          <h3>Buy</h3>
+          <p>Purchase vinyl directly with our secure payment flow. View all your orders in your account.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section class="cta-band">
+    <h2>Ready to Start?</h2>
+    <p>Join MusicOnline today and connect with vinyl lovers everywhere.</p>
+    <div class="cta-band-btns">
+      <a href="login.html#register" class="btn btn-white btn-lg"><i class="fas fa-user-plus"></i> Create Account</a>
+      <a href="search.html" class="btn btn-outline-white btn-lg"><i class="fas fa-search"></i> Browse Vinyl</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div style="display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-4)">
+          <div class="header-disc" style="width:32px;height:32px"></div>
+          <span style="font-weight:var(--fw-bold);color:var(--neutral-0);font-size:var(--fs-md)">Music<span style="color:var(--gold-400)">Online</span></span>
+        </div>
+        <p class="footer-desc">Your marketplace for vinyl records — albums, EPs and singles from collectors and retailers worldwide.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="search.html">Browse Vinyl</a>
+        <a href="login.html">Sign In</a>
+        <a href="login.html#register">Register</a>
+        <a href="#how">How It Works</a>
+      </div>
+      <div class="footer-col">
+        <h4>Formats</h4>
+        <a href="search.html?type=ALBUM">Albums</a>
+        <a href="search.html?type=EP">EPs</a>
+        <a href="search.html?type=SINGLE">Singles</a>
+      </div>
+      <div class="footer-col">
+        <h4>Info</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="mailto:info@musiconline.com">Contact Us</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 MusicOnline. All rights reserved.</span>
+      <span>The marketplace for vinyl record enthusiasts.</span>
+    </div>
+  </footer>
+
+  <script src="../js/api-base.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    // Passing data via URL — Task 3 requirement
+    function heroSearch(e) {
+      e.preventDefault();
+      var q    = document.getElementById('hero-q').value.trim();
+      var type = document.getElementById('hero-type').value;
+      var url  = 'search.html?';
+      if (q)              url += 'q=' + encodeURIComponent(q) + '&';
+      if (type !== 'all') url += 'type=' + encodeURIComponent(type) + '&';
+      window.location.href = url.replace(/&$/, '');
+      return false;
+    }
+
+    // Update auth nav if logged in
+    var _u = moGetUser ? moGetUser() : null;
+    if (_u && _u.loggedIn) {
+      var nav = document.getElementById('header-nav');
+      var signInBtn = nav.querySelector('a.btn-gold');
+      if (signInBtn) { signInBtn.href = 'dashboard.html'; signInBtn.innerHTML = '<i class="fas fa-tachometer-alt"></i> Dashboard'; }
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vinyl Detail — MusicOnline</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .detail-main {
+      max-width: 980px;
+      margin: var(--sp-10) auto;
+      padding: 0 var(--sp-6);
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: var(--sp-2);
+      font-size: var(--fs-sm); color: var(--text-muted);
+      margin-bottom: var(--sp-6);
+    }
+    .breadcrumb a { color: var(--brand-600); }
+    .breadcrumb i { font-size: var(--fs-xs); }
+
+    /* ── Detail card ── */
+    .detail-card {
+      background: var(--bg-card);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--r-2xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+    }
+
+    /* Left: artwork panel */
+    .detail-artwork {
+      background: linear-gradient(160deg, var(--neutral-900), var(--brand-900));
+      min-height: 420px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .detail-artwork-disc {
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%,
+        var(--neutral-600)  0 12%,
+        var(--neutral-900) 12% 25%,
+        var(--neutral-800) 25% 38%,
+        var(--neutral-900) 38% 52%,
+        var(--neutral-700) 52% 65%,
+        var(--neutral-900) 65% 100%
+      );
+      box-shadow: 0 0 0 6px rgba(255,255,255,.04), var(--shadow-xl);
+      position: relative;
+    }
+    .detail-artwork-disc::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--neutral-700);
+      box-shadow: 0 0 0 3px var(--gold-500);
+    }
+    .detail-artwork-img {
+      position: absolute; inset: 0;
+    }
+    .detail-artwork-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* Right: info panel */
+    .detail-info {
+      padding: var(--sp-8) var(--sp-8);
+    }
+    .detail-badges { margin-bottom: var(--sp-4); }
+    .detail-title {
+      font-size: var(--fs-3xl);
+      font-weight: var(--fw-black);
+      color: var(--text-primary);
+      line-height: var(--lh-tight);
+      margin-bottom: var(--sp-2);
+    }
+    .detail-artist {
+      font-size: var(--fs-xl);
+      color: var(--brand-600);
+      font-weight: var(--fw-semi);
+      margin-bottom: var(--sp-5);
+    }
+    .detail-price {
+      font-size: var(--fs-4xl);
+      font-weight: var(--fw-black);
+      color: var(--brand-700);
+      line-height: 1;
+      margin-bottom: var(--sp-6);
+    }
+
+    /* Meta grid */
+    .detail-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-6);
+      padding: var(--sp-5);
+      background: var(--neutral-50);
+      border-radius: var(--r-lg);
+    }
+    .meta-item .meta-label {
+      font-size: var(--fs-xs);
+      color: var(--text-muted);
+      font-weight: var(--fw-semi);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 3px;
+    }
+    .meta-item .meta-val {
+      font-size: var(--fs-sm);
+      color: var(--text-primary);
+      font-weight: var(--fw-medium);
+    }
+
+    /* Description */
+    .detail-desc {
+      font-size: var(--fs-sm);
+      color: var(--text-secondary);
+      line-height: var(--lh-loose);
+      border-top: 1px solid var(--neutral-200);
+      padding-top: var(--sp-5);
+      margin-bottom: var(--sp-6);
+    }
+
+    /* Seller badge */
+    .seller-strip {
+      display: flex; align-items: center; gap: var(--sp-3);
+      background: var(--brand-50);
+      border: 1px solid var(--brand-100);
+      border-radius: var(--r-lg);
+      padding: var(--sp-3) var(--sp-4);
+      margin-bottom: var(--sp-6);
+    }
+    .seller-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-800));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: var(--fs-sm); flex-shrink: 0;
+    }
+    .seller-strip .seller-label {
+      font-size: var(--fs-xs); color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .07em;
+    }
+    .seller-strip .seller-name { font-size: var(--fs-sm); font-weight: var(--fw-semi); color: var(--text-primary); }
+
+    @media (max-width: 760px) {
+      .detail-card { grid-template-columns: 1fr; }
+      .detail-artwork { min-height: 260px; }
+      .detail-main { padding: 0 var(--sp-4); }
+      .detail-info { padding: var(--sp-5); }
+      .detail-title { font-size: var(--fs-2xl); }
+    }
+
+    /* ── Buy Now button ── */
+    #detail-cta-wrap .btn-buy {
+      width: 100%; justify-content: center;
+      background: linear-gradient(135deg, var(--brand-600), var(--brand-800));
+      color: #fff; border: none;
+      font-size: var(--fs-md); font-weight: var(--fw-semi);
+      padding: var(--sp-4) var(--sp-6);
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      display: flex; align-items: center; gap: var(--sp-2);
+      transition: opacity .2s;
+    }
+    #detail-cta-wrap .btn-buy:hover { opacity: .88; }
+    #detail-cta-wrap .btn-buy:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Self-purchase notice ── */
+    .own-listing-note {
+      display: flex; align-items: center; gap: var(--sp-3);
+      background: #fff8e1; border: 1px solid #ffe082;
+      border-radius: var(--r-lg);
+      padding: var(--sp-3) var(--sp-4);
+      font-size: var(--fs-sm); color: #7c5f00;
+    }
+
+    /* ── Purchase modal ── */
+    .purchase-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 9000;
+      display: none; align-items: center; justify-content: center;
+    }
+    .purchase-modal-overlay.open { display: flex; }
+    .purchase-modal {
+      background: var(--bg-card);
+      border-radius: var(--r-2xl);
+      padding: var(--sp-8);
+      max-width: 380px; width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+    }
+    .purchase-modal h3 {
+      font-size: var(--fs-xl); font-weight: var(--fw-black);
+      color: var(--text-primary); margin-bottom: var(--sp-1);
+    }
+    .purchase-modal .modal-price {
+      font-size: var(--fs-3xl); font-weight: var(--fw-black);
+      color: var(--brand-700); margin-bottom: var(--sp-5);
+    }
+    .qr-wrap {
+      width: 160px; height: 160px;
+      border: 3px solid var(--neutral-200);
+      border-radius: var(--r-lg);
+      margin: 0 auto var(--sp-5);
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      background: var(--neutral-50);
+    }
+    .qr-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .purchase-modal .modal-hint {
+      font-size: var(--fs-xs); color: var(--text-muted); margin-bottom: var(--sp-5);
+    }
+    .purchase-modal .btn-paid {
+      width: 100%; padding: var(--sp-3); border: none; border-radius: var(--r-lg);
+      background: var(--brand-600); color: #fff;
+      font-size: var(--fs-md); font-weight: var(--fw-semi);
+      cursor: pointer; margin-bottom: var(--sp-3);
+    }
+    .purchase-modal .btn-paid:hover { background: var(--brand-700); }
+    .purchase-modal .btn-cancel-modal {
+      background: none; border: none; color: var(--text-muted);
+      font-size: var(--fs-sm); cursor: pointer;
+    }
+    .purchase-modal .btn-cancel-modal:hover { color: var(--text-primary); }
+  </style>
+</head>
+<body>
+
+  <!-- Site header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="home.html" class="header-brand">
+        <div class="header-disc"></div>
+        <span class="header-logo-text">Music<span>Online</span></span>
+      </a>
+      <nav class="header-nav">
+        <a href="home.html">Home</a>
+        <a href="search.html"><i class="fas fa-arrow-left"></i> Back to Search</a>
+        <span id="header-auth-links"></span>
+      </nav>
+    </div>
+  </header>
+
+  <div class="detail-main">
+    <!-- breadcrumb -->
+    <div class="breadcrumb">
+      <a href="home.html">Home</a>
+      <i class="fas fa-chevron-right"></i>
+      <a href="search.html">Browse Vinyl</a>
+      <i class="fas fa-chevron-right"></i>
+      <span id="bc-title">Loading…</span>
+    </div>
+
+    <!-- Loading state -->
+    <div id="detail-loading" style="text-align:center;padding:var(--sp-16)">
+      <div class="spinner" style="margin:0 auto var(--sp-4)"></div>
+      <p style="color:var(--text-muted)">Loading vinyl details…</p>
+    </div>
+
+    <!-- Content (shown after load) -->
+    <div id="detail-content" style="display:none">
+      <div class="detail-card">
+        <!-- Artwork -->
+        <div class="detail-artwork" id="detail-artwork-panel">
+          <div class="detail-artwork-disc"></div>
+        </div>
+        <!-- Info -->
+        <div class="detail-info">
+          <div class="detail-badges" id="detail-type"></div>
+          <h1 class="detail-title" id="detail-title"></h1>
+          <div class="detail-artist" id="detail-artist"></div>
+          <div class="detail-price" id="detail-price"></div>
+
+          <div class="detail-meta">
+            <div class="meta-item">
+              <div class="meta-label">Genre</div>
+              <div class="meta-val" id="detail-genre">—</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Label</div>
+              <div class="meta-val" id="detail-label">—</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Release Date</div>
+              <div class="meta-val" id="detail-release">—</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Condition</div>
+              <div class="meta-val" id="detail-condition">—</div>
+            </div>
+          </div>
+
+          <div class="detail-desc" id="detail-desc" style="display:none"></div>
+
+          <div class="seller-strip">
+            <div class="seller-avatar"><i class="fas fa-user"></i></div>
+            <div>
+              <div class="seller-label">Listed by</div>
+              <div class="seller-name" id="detail-seller">—</div>
+            </div>
+          </div>
+
+          <div id="detail-cta-wrap">
+            <!-- CTA rendered by JS after vinyl data loads -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="detail-error" style="display:none">
+      <div class="empty-state">
+        <div class="icon"><i class="fas fa-exclamation-circle"></i></div>
+        <h3>Vinyl not found</h3>
+        <p>This listing may have been removed or the link is invalid.</p>
+        <a href="search.html" class="btn btn-primary" style="margin-top:var(--sp-5)">
+          <i class="fas fa-search"></i> Back to Search
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer" style="margin-top:var(--sp-16)">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <span>&copy; 2025 MusicOnline. All rights reserved.</span>
+      <a href="search.html" style="color:rgba(255,255,255,.4);font-size:var(--fs-xs)">
+        <i class="fas fa-arrow-left"></i> Back to Browse
+      </a>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <!-- ── Purchase Modal ── -->
+  <div class="purchase-modal-overlay" id="purchase-modal-overlay">
+    <div class="purchase-modal">
+      <h3><i class="fas fa-record-vinyl" style="color:var(--brand-600)"></i> Complete Purchase</h3>
+      <div class="modal-price" id="modal-price-display">$0.00</div>
+      <div class="qr-wrap">
+        <img id="modal-qr-img" src="" alt="Payment QR Code">
+      </div>
+      <p class="modal-hint">Scan the QR code to complete payment, then click "Payment Completed".</p>
+      <button class="btn-paid" onclick="confirmPurchase()">
+        <i class="fas fa-check-circle"></i> Payment Completed
+      </button>
+      <button class="btn-cancel-modal" onclick="closePurchaseModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script src="../js/api-base.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    /* ── Read vinyl id from URL (Task 3: URL data passing) ── */
+    var params  = new URLSearchParams(window.location.search);
+    var vinylId = params.get('id');
+    var _currentVinyl = null; // store loaded vinyl data
+
+    /* ── Header auth links ── */
+    (function () {
+      var user = moGetUser ? moGetUser() : null;
+      var el   = document.getElementById('header-auth-links');
+      if (user && user.loggedIn) {
+        el.innerHTML = '<a href="dashboard.html" style="color:var(--gold-300)"><i class="fas fa-user"></i> My Account</a>';
+      } else {
+        el.innerHTML =
+          '<a href="login.html">Sign In</a>' +
+          '<a href="login.html#register" style="background:var(--gold-500);color:var(--neutral-900);padding:6px 14px;border-radius:var(--r-md);font-weight:var(--fw-semi)">Register</a>';
+      }
+    })();
+
+    /* ── Render CTA after vinyl is loaded ── */
+    function renderCta(v) {
+      var wrap = document.getElementById('detail-cta-wrap');
+      var user = moGetUser ? moGetUser() : null;
+
+      // Not logged in
+      if (!user || !user.loggedIn) {
+        wrap.innerHTML =
+          '<div style="margin-bottom:var(--sp-3);padding:var(--sp-3) var(--sp-4);' +
+          'background:#fff3cd;border:1px solid #ffe082;border-radius:var(--r-lg);' +
+          'font-size:var(--fs-sm);color:#7c5f00;">' +
+          '<i class="fas fa-info-circle"></i> Please log in to purchase</div>' +
+          '<a href="login.html" class="btn btn-primary btn-lg" style="width:100%;justify-content:center">' +
+          '<i class="fas fa-sign-in-alt"></i> Sign In to Purchase</a>';
+        return;
+      }
+
+      // Seller viewing own listing
+      if (user.email && v.sellerEmail && user.email === v.sellerEmail) {
+        wrap.innerHTML =
+          '<div class="own-listing-note">' +
+          '<i class="fas fa-store"></i>' +
+          '<span>This is your listing — sellers cannot purchase their own items.</span></div>';
+        return;
+      }
+
+      // Logged-in buyer: show Buy Now
+      wrap.innerHTML =
+        '<button class="btn btn-buy" id="btn-buy-now" onclick="openPurchaseModal()">' +
+        '<i class="fas fa-shopping-cart"></i> Buy Now — ' + fmtPrice(v.price) + '</button>';
+    }
+
+    /* ── Purchase modal helpers ── */
+    function openPurchaseModal() {
+      if (!_currentVinyl) return;
+      var priceText = fmtPrice(_currentVinyl.price);
+      document.getElementById('modal-price-display').textContent = priceText;
+      // Random QR from qrserver using vinyl id + timestamp for uniqueness
+      var qrData = encodeURIComponent('musiconline-pay-vinyl-' + _currentVinyl.id + '-' + Date.now());
+      document.getElementById('modal-qr-img').src =
+        'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + qrData;
+      document.getElementById('purchase-modal-overlay').classList.add('open');
+    }
+
+    function closePurchaseModal() {
+      document.getElementById('purchase-modal-overlay').classList.remove('open');
+    }
+
+    function confirmPurchase() {
+      closePurchaseModal();
+      var btn = document.getElementById('btn-buy-now');
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...'; }
+
+      var token = moGetToken ? moGetToken() : null;
+      fetch(moApiBaseUrl() + '/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ vinylId: _currentVinyl.id })
+      })
+      .then(function (r) {
+        return r.text().then(function (t) {
+          var d = {};
+          if (t) { try { d = JSON.parse(t); } catch (e) {} }
+          if (!r.ok) throw new Error(d.message || d.error || 'Purchase failed (' + r.status + ')');
+          return d;
+        });
+      })
+      .then(function () {
+        var wrap = document.getElementById('detail-cta-wrap');
+        wrap.innerHTML =
+          '<div style="display:flex;align-items:center;gap:var(--sp-3);' +
+          'background:#e8f5e9;border:1px solid #a5d6a7;border-radius:var(--r-lg);' +
+          'padding:var(--sp-4);font-size:var(--fs-sm);color:#2e7d32;">' +
+          '<i class="fas fa-check-circle" style="font-size:var(--fs-xl)"></i>' +
+          '<div><strong>Purchase Successful!</strong><br>Check <a href="my-orders.html" ' +
+          'style="color:var(--brand-600);font-weight:var(--fw-semi)">My Orders</a> to view your purchase.</div></div>';
+      })
+      .catch(function (err) {
+        alert(err.message || 'Purchase failed. Please try again.');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Buy Now — ' + fmtPrice(_currentVinyl.price); }
+      });
+    }
+
+    // Close modal on overlay click
+    document.getElementById('purchase-modal-overlay').addEventListener('click', function (e) {
+      if (e.target === this) closePurchaseModal();
+    });
+
+    /* ── Load vinyl detail (Task 3: server-side SQL query) ── */
+    if (!vinylId) {
+      document.getElementById('detail-loading').style.display = 'none';
+      document.getElementById('detail-error').style.display   = 'block';
+    } else {
+      fetch(moApiBaseUrl() + '/api/public/vinyls/' + encodeURIComponent(vinylId))
+        .then(function (r) {
+          if (!r.ok) throw new Error('Not found');
+          return r.json();
+        })
+        .then(function (v) {
+          _currentVinyl = v;
+
+          /* Update page title */
+          document.title = escHtml(v.title) + ' by ' + escHtml(v.artist) + ' — MusicOnline';
+          document.getElementById('bc-title').textContent = v.title;
+
+          /* Artwork */
+          if (v.imageUrl) {
+            var panel = document.getElementById('detail-artwork-panel');
+            var imgWrap = document.createElement('div');
+            imgWrap.className = 'detail-artwork-img';
+            imgWrap.innerHTML =
+              '<img src="' + escHtml(v.imageUrl) + '" alt="' + escHtml(v.title) + '"' +
+              ' onerror="this.parentNode.style.display=\'none\'">';
+            panel.appendChild(imgWrap);
+          }
+
+          /* Fields */
+          document.getElementById('detail-type').innerHTML     = typeBadge(v.type);
+          document.getElementById('detail-title').textContent  = v.title;
+          document.getElementById('detail-artist').textContent = v.artist;
+          document.getElementById('detail-price').textContent  = fmtPrice(v.price);
+          document.getElementById('detail-genre').textContent     = v.genre     || '—';
+          document.getElementById('detail-label').textContent     = v.label     || '—';
+          document.getElementById('detail-release').textContent   = v.releaseDate ? fmtDate(v.releaseDate) : '—';
+          document.getElementById('detail-condition').textContent = v.condition  || '—';
+          document.getElementById('detail-seller').textContent    = v.sellerUsername || v.sellerEmail || 'Unknown';
+
+          if (v.description) {
+            var descEl = document.getElementById('detail-desc');
+            descEl.textContent = v.description;
+            descEl.style.display = 'block';
+          }
+
+          /* Render CTA based on login state */
+          renderCta(v);
+
+          document.getElementById('detail-loading').style.display  = 'none';
+          document.getElementById('detail-content').style.display = 'block';
+        })
+        .catch(function () {
+          document.getElementById('detail-loading').style.display = 'none';
+          document.getElementById('detail-error').style.display   = 'block';
+        });
+    }
+  </script>
+</body>
+</html>

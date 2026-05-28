@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — MusicOnline</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ── Tab navigation ── */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--neutral-200);
+      margin-bottom: var(--sp-6);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 11px 20px;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-semi);
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all var(--ease-fast);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .tab-btn:hover { color: var(--text-primary); }
+    .tab-btn.active { color: var(--brand-700); border-bottom-color: var(--brand-700); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── User search bar ── */
+    .search-bar {
+      display: flex; gap: var(--sp-3); align-items: center;
+      margin-bottom: var(--sp-4);
+    }
+    .search-bar input {
+      flex: 1; max-width: 360px;
+      padding: 9px 14px;
+      border: 1.5px solid var(--neutral-300);
+      border-radius: var(--r-md);
+      font-size: var(--fs-sm);
+      font-family: inherit;
+      background: var(--bg-input);
+      color: var(--text-primary);
+      transition: border-color var(--ease-fast);
+    }
+    .search-bar input:focus { border-color: var(--brand-500); outline: none; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ══════════ Sidebar ══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="home.html" class="sidebar-logo">
+      <div class="sidebar-logo-disc"></div>
+      <span class="sidebar-logo-text">Music<span>Online</span></span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a class="nav-item" href="search.html"><i class="fas fa-search"></i> Browse Vinyl</a>
+      <div class="nav-section">My Account</div>
+      <a class="nav-item" href="my-vinyls.html"><i class="fas fa-compact-disc"></i> My Listings</a>
+      <a class="nav-item" href="add-vinyl.html"><i class="fas fa-plus-circle"></i> Add Vinyl</a>
+      <a class="nav-item" href="my-orders.html"><i class="fas fa-shopping-bag"></i> My Orders</a>
+      <a class="nav-item" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+      <div class="nav-section">Admin</div>
+      <a class="nav-item active" href="admin.html"><i class="fas fa-shield-alt"></i> Admin Panel</a>
+    </nav>
+    <div class="sidebar-user" onclick="moLogout && moLogout()">
+      <div class="sidebar-avatar"><i class="fas fa-user-shield"></i></div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-username" id="sidebar-username">Admin</div>
+        <div class="sidebar-role" id="sidebar-role">ADMIN</div>
+      </div>
+      <i class="fas fa-sign-out-alt" style="color:rgba(255,255,255,.3);font-size:var(--fs-sm)"></i>
+    </div>
+  </aside>
+
+  <!-- ══════════ Main ══════════ -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title">
+        <i class="fas fa-shield-alt" style="color:var(--gold-500)"></i> Admin Panel
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- Stats -->
+      <div class="stats-row" style="margin-bottom:var(--sp-6)">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--brand-50);color:var(--brand-600)"><i class="fas fa-users"></i></div>
+          <div><div class="stat-val" id="stat-users">—</div><div class="stat-lbl">Registered Users</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fff8e1;color:var(--gold-700)"><i class="fas fa-compact-disc"></i></div>
+          <div><div class="stat-val" id="stat-vinyls">—</div><div class="stat-lbl">Total Listings</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8f5e9;color:#2e7d32"><i class="fas fa-user-shield"></i></div>
+          <div><div class="stat-val" id="stat-admins">—</div><div class="stat-lbl">Admin Accounts</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f3e5f5;color:#6a1b9a"><i class="fas fa-scroll"></i></div>
+          <div><div class="stat-val" id="stat-audit">—</div><div class="stat-lbl">Audit Events</div></div>
+        </div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-btn-vinyls" onclick="switchTab('vinyls')">
+          <i class="fas fa-compact-disc"></i> All Vinyls
+        </button>
+        <button class="tab-btn" id="tab-btn-users" onclick="switchTab('users')">
+          <i class="fas fa-users"></i> Users
+        </button>
+        <button class="tab-btn" id="tab-btn-admins" onclick="switchTab('admins')">
+          <i class="fas fa-user-shield"></i> Admins
+        </button>
+        <button class="tab-btn" id="tab-btn-audit" onclick="switchTab('audit')">
+          <i class="fas fa-scroll"></i> Audit Log
+        </button>
+      </div>
+
+      <!-- ── Tab: Vinyls ── -->
+      <div class="tab-panel active" id="tab-vinyls">
+        <div class="search-bar">
+          <input type="text" id="vinyls-search" placeholder="Filter by title or artist…" oninput="filterVinyls()">
+          <span style="font-size:var(--fs-xs);color:var(--text-muted)" id="vinyls-count"></span>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="vinyls-table">
+            <thead>
+              <tr>
+                <th>Title</th><th>Artist</th><th>Type</th><th>Price</th>
+                <th>Condition</th><th>Seller</th><th>Listed</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vinyls-tbody">
+              <tr><td colspan="8" style="text-align:center;padding:var(--sp-8)"><div class="spinner" style="margin:0 auto"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="vinyls-pagination"></div>
+      </div>
+
+      <!-- ── Tab: Users ── -->
+      <div class="tab-panel" id="tab-users">
+        <div class="search-bar">
+          <input type="text" id="users-search" placeholder="Filter by username or email…" oninput="filterUsers()">
+          <span style="font-size:var(--fs-xs);color:var(--text-muted)" id="users-count"></span>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="users-table">
+            <thead>
+              <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th></tr>
+            </thead>
+            <tbody id="users-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:var(--sp-8)"><div class="spinner" style="margin:0 auto"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Tab: Admins (mo_admins — PDF Task 2 separate admin table) ── -->
+      <div class="tab-panel" id="tab-admins">
+        <div style="background:#fffde7;border:1px solid #fff176;border-radius:var(--r-md);padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-4);font-size:var(--fs-sm);color:var(--text-secondary)">
+          <i class="fas fa-info-circle" style="color:#f9a825"></i>
+          This data is stored in the dedicated <strong>mo_admins</strong> table, separate from regular users (PDF Task 2 requirement).
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>ID</th><th>Username</th><th>Email</th><th>Admin Level</th><th>Status</th><th>Created</th></tr>
+            </thead>
+            <tbody id="admins-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:var(--sp-8)"><div class="spinner" style="margin:0 auto"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Tab: Audit Log ── -->
+      <div class="tab-panel" id="tab-audit">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Time</th><th>Actor</th><th>Role</th><th>Action</th><th>Entity</th><th>Detail</th><th>IP</th></tr>
+            </thead>
+            <tbody id="audit-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:var(--sp-8)"><div class="spinner" style="margin:0 auto"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="audit-pagination"></div>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+<div id="toast-container"></div>
+
+<script src="../js/api-base.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  /* ── Session check — admin only ── */
+  var user = requireAdmin();
+  if (!user) {
+    /* requireAdmin() redirects non-admins */
+  } else {
+    var unEl = document.getElementById('sidebar-username');
+    var rlEl = document.getElementById('sidebar-role');
+    if (unEl) unEl.textContent = user.username || user.email;
+    if (rlEl) rlEl.textContent = user.role;
+
+    loadVinyls(0);
+    loadUsers();
+    loadAdmins();
+    loadAudit(0);
+  }
+
+  /* ── Tab switching ── */
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+    document.getElementById('tab-btn-' + name).classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  /* ══════════════════════
+     Vinyls tab
+     ══════════════════════ */
+  var vinylsPage = 0;
+  var vinylsTotalPages = 0;
+  var allVinyls = [];
+
+  function loadVinyls(page) {
+    vinylsPage = page;
+    moApiFetch('/api/admin/vinyls?page=' + page + '&size=20')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        allVinyls = data.content || [];
+        vinylsTotalPages = data.totalPages || 0;
+        document.getElementById('stat-vinyls').textContent = data.totalElements || 0;
+        renderVinyls(allVinyls);
+        renderVinylsPagination();
+      })
+      .catch(function () {
+        document.getElementById('vinyls-tbody').innerHTML =
+          '<tr><td colspan="8" style="color:var(--clr-error)"><i class="fas fa-exclamation-circle"></i> Failed to load vinyls.</td></tr>';
+      });
+  }
+
+  function renderVinyls(items) {
+    document.getElementById('vinyls-count').textContent = items.length + ' record' + (items.length !== 1 ? 's' : '');
+    var tbody = document.getElementById('vinyls-tbody');
+    if (!items.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:var(--sp-6)">No vinyls found</td></tr>';
+      return;
+    }
+    tbody.innerHTML = items.map(function (v) {
+      return '<tr>' +
+        '<td><strong>' + escHtml(v.title) + '</strong></td>' +
+        '<td>' + escHtml(v.artist) + '</td>' +
+        '<td>' + typeBadge(v.type) + '</td>' +
+        '<td>' + fmtPrice(v.price) + '</td>' +
+        '<td>' + escHtml(v.condition || '—') + '</td>' +
+        '<td>' + escHtml(v.sellerUsername || v.sellerEmail || '—') + '</td>' +
+        '<td style="white-space:nowrap;font-size:var(--fs-xs)">' + fmtDate(v.createdAt) + '</td>' +
+        '<td>' +
+        '<button class="btn btn-danger btn-sm btn-icon" title="Delete this vinyl" onclick="adminDeleteVinyl(' + v.id + ',\'' + escHtml(v.title).replace(/'/g,"&#39;") + '\')">' +
+        '<i class="fas fa-trash"></i></button></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function filterVinyls() {
+    var q = document.getElementById('vinyls-search').value.toLowerCase();
+    if (!q) { renderVinyls(allVinyls); return; }
+    var filtered = allVinyls.filter(function (v) {
+      return (v.title || '').toLowerCase().indexOf(q) !== -1 ||
+             (v.artist || '').toLowerCase().indexOf(q) !== -1;
+    });
+    renderVinyls(filtered);
+  }
+
+  function renderVinylsPagination() {
+    var el = document.getElementById('vinyls-pagination');
+    if (vinylsTotalPages <= 1) { el.innerHTML = ''; return; }
+    var html = '<button class="page-btn" onclick="loadVinyls(' + (vinylsPage - 1) + ')" ' + (vinylsPage === 0 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
+    for (var i = 0; i < Math.min(vinylsTotalPages, 8); i++) {
+      html += '<button class="page-btn' + (i === vinylsPage ? ' active' : '') + '" onclick="loadVinyls(' + i + ')">' + (i + 1) + '</button>';
+    }
+    if (vinylsTotalPages > 8) html += '<span style="padding:0 4px;color:var(--text-muted)">…</span><button class="page-btn" onclick="loadVinyls(' + (vinylsTotalPages - 1) + ')">' + vinylsTotalPages + '</button>';
+    html += '<button class="page-btn" onclick="loadVinyls(' + (vinylsPage + 1) + ')" ' + (vinylsPage >= vinylsTotalPages - 1 ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
+    el.innerHTML = html;
+  }
+
+  function adminDeleteVinyl(id, title) {
+    if (!confirm('Delete "' + title + '"?\nThis cannot be undone.')) return;
+    moApiFetch('/api/admin/vinyls/' + id, { method: 'DELETE' })
+      .then(function (r) { if (!r.ok && r.status !== 204) return r.json().then(function (d) { throw new Error(d.error || 'Failed'); }); })
+      .then(function () { showToast('Deleted: ' + title, 'success'); loadVinyls(vinylsPage); })
+      .catch(function (err) { showToast(err.message || 'Delete failed', 'error'); });
+  }
+
+  /* ══════════════════════
+     Users tab
+     ══════════════════════ */
+  var allUsers = [];
+
+  function loadUsers() {
+    moApiFetch('/api/admin/users')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        allUsers = Array.isArray(data) ? data : [];
+        document.getElementById('stat-users').textContent = allUsers.length;
+        renderUsers(allUsers);
+      })
+      .catch(function () {
+        document.getElementById('users-tbody').innerHTML =
+          '<tr><td colspan="6" style="color:var(--clr-error)">Failed to load users.</td></tr>';
+      });
+  }
+
+  function renderUsers(items) {
+    document.getElementById('users-count').textContent = items.length + ' user' + (items.length !== 1 ? 's' : '');
+    var tbody = document.getElementById('users-tbody');
+    if (!items.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:var(--sp-6)">No users found</td></tr>';
+      return;
+    }
+    var roleMap = { ADMIN: 'badge-admin', RETAILER: 'badge-retailer', USER: 'badge-user' };
+    tbody.innerHTML = items.map(function (u) {
+      return '<tr>' +
+        '<td style="color:var(--text-muted)">#' + u.id + '</td>' +
+        '<td><strong>' + escHtml(u.username || '—') + '</strong></td>' +
+        '<td>' + escHtml(u.email || '—') + '</td>' +
+        '<td><span class="badge ' + (roleMap[u.role] || 'badge-neutral') + '">' + escHtml(u.role || '—') + '</span></td>' +
+        '<td><span class="badge ' + (u.enabled ? 'badge-active' : 'badge-disabled') + '">' + (u.enabled ? 'Active' : 'Disabled') + '</span></td>' +
+        '<td style="white-space:nowrap;font-size:var(--fs-xs)">' + fmtDate(u.createdAt) + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function filterUsers() {
+    var q = document.getElementById('users-search').value.toLowerCase();
+    if (!q) { renderUsers(allUsers); return; }
+    var filtered = allUsers.filter(function (u) {
+      return (u.username || '').toLowerCase().indexOf(q) !== -1 ||
+             (u.email || '').toLowerCase().indexOf(q) !== -1;
+    });
+    renderUsers(filtered);
+  }
+
+  /* ══════════════════════
+     Admins tab (mo_admins)
+     ══════════════════════ */
+  function loadAdmins() {
+    moApiFetch('/api/admin/admins')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var items = Array.isArray(data) ? data : [];
+        document.getElementById('stat-admins').textContent = items.length;
+        var tbody = document.getElementById('admins-tbody');
+        if (!items.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:var(--sp-6)">No admin accounts found</td></tr>';
+          return;
+        }
+        tbody.innerHTML = items.map(function (a) {
+          var levelBadge = a.adminLevel === 'SUPER'
+            ? '<span class="badge" style="background:#fef3c7;color:#92400e;border:1px solid #fbbf24"><i class="fas fa-crown" style="margin-right:3px"></i>SUPER</span>'
+            : '<span class="badge badge-neutral">MODERATOR</span>';
+          return '<tr>' +
+            '<td style="color:var(--text-muted)">#' + a.id + '</td>' +
+            '<td><strong>' + escHtml(a.username || '—') + '</strong></td>' +
+            '<td>' + escHtml(a.email || '—') + '</td>' +
+            '<td>' + levelBadge + '</td>' +
+            '<td><span class="badge ' + (a.active ? 'badge-active' : 'badge-disabled') + '">' + (a.active ? 'Active' : 'Inactive') + '</span></td>' +
+            '<td style="white-space:nowrap;font-size:var(--fs-xs)">' + fmtDate(a.createdAt) + '</td>' +
+            '</tr>';
+        }).join('');
+      })
+      .catch(function () {
+        document.getElementById('admins-tbody').innerHTML =
+          '<tr><td colspan="6" style="color:var(--clr-error)">Failed to load admins.</td></tr>';
+      });
+  }
+
+  /* ══════════════════════
+     Audit log tab
+     ══════════════════════ */
+  var auditPage = 0;
+  var auditTotalPages = 0;
+
+  function loadAudit(page) {
+    auditPage = page;
+    moApiFetch('/api/admin/audit?page=' + page + '&size=30')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        auditTotalPages = data.totalPages || 0;
+        document.getElementById('stat-audit').textContent = data.totalElements || 0;
+        var tbody = document.getElementById('audit-tbody');
+        var items = data.content || [];
+        if (!items.length) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:var(--sp-6)">No audit events</td></tr>';
+          document.getElementById('audit-pagination').innerHTML = '';
+          return;
+        }
+        tbody.innerHTML = items.map(function (a) {
+          return '<tr>' +
+            '<td style="white-space:nowrap;font-size:var(--fs-xs)">' + fmtDate(a.occurredAt) + '</td>' +
+            '<td><strong>' + escHtml(a.actor || '—') + '</strong></td>' +
+            '<td><span class="badge badge-neutral">' + escHtml(a.actorRole || '—') + '</span></td>' +
+            '<td style="font-weight:600;color:var(--brand-700)">' + escHtml(a.action || '—') + '</td>' +
+            '<td>' + escHtml(a.entityType || '—') + ' <span style="color:var(--text-muted)">#' + escHtml(String(a.entityId || '?')) + '</span></td>' +
+            '<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fs-xs)">' + escHtml(a.detail || '—') + '</td>' +
+            '<td style="font-size:var(--fs-xs);color:var(--text-muted)">' + escHtml(a.ipAddress || '—') + '</td>' +
+            '</tr>';
+        }).join('');
+        renderAuditPagination();
+      })
+      .catch(function () {
+        document.getElementById('audit-tbody').innerHTML =
+          '<tr><td colspan="7" style="color:var(--clr-error)">Failed to load audit log.</td></tr>';
+      });
+  }
+
+  function renderAuditPagination() {
+    var el = document.getElementById('audit-pagination');
+    if (auditTotalPages <= 1) { el.innerHTML = ''; return; }
+    var html = '<button class="page-btn" onclick="loadAudit(' + (auditPage - 1) + ')" ' + (auditPage === 0 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
+    for (var i = 0; i < Math.min(auditTotalPages, 8); i++) {
+      html += '<button class="page-btn' + (i === auditPage ? ' active' : '') + '" onclick="loadAudit(' + i + ')">' + (i + 1) + '</button>';
+    }
+    html += '<button class="page-btn" onclick="loadAudit(' + (auditPage + 1) + ')" ' + (auditPage >= auditTotalPages - 1 ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
+    el.innerHTML = html;
+  }
+</script>
+</body>
+</html>
